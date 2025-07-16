@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLATONIC ERP - Phase 1</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Chart.js for charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom Styles to blend Tailwind with potential custom needs -->
+    <style>
+        /* Using a common font for consistency */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar for a cleaner look in the sidebar */
+        .sidebar-nav::-webkit-scrollbar {
+            width: 4px;
+        }
+        .sidebar-nav::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 20px;
+        }
+        /* Style for active navigation item */
+        .nav-item.active {
+            background-color: #2563eb; /* bg-blue-600 */
+            color: white;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .nav-item.active .nav-icon {
+             color: white;
+        }
+        /* Hide all pages by default */
+        .page-content {
+            display: none;
+        }
+        /* Show the active page */
+        .page-content.active {
+            display: block;
+        }
+        
+        /* Responsive table styles for Quotation */
+        @media (max-width: 768px) {
+            #quote-items-table thead {
+                display: none;
+            }
+            #quote-items-table, #quote-items-table tbody, #quote-items-table tr, #quote-items-table td {
+                display: block;
+                width: 100%;
+            }
+            #quote-items-table tr {
+                margin-bottom: 1rem;
+                border: 1px solid #e5e7eb;
+                border-radius: 0.5rem;
+                padding: 1rem;
+            }
+            #quote-items-table td {
+                padding-left: 50%;
+                position: relative;
+                text-align: right;
+                border: none;
+            }
+            #quote-items-table td:before {
+                content: attr(data-label);
+                position: absolute;
+                left: 0.75rem;
+                width: 45%;
+                padding-right: 0.75rem;
+                font-weight: 600;
+                text-align: left;
+                color: #4b5563;
+            }
+            #quote-items-table td.action-cell {
+                padding-left: 0.75rem;
+                text-align: center;
+                margin-top: 0.5rem;
+            }
+             #quote-items-table td.action-cell:before {
+                content: '';
+             }
+        }
+    </style>
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white shadow-lg flex flex-col shrink-0">
+            <div class="flex items-center justify-center h-20 border-b">
+                <h1 class="text-2xl font-bold text-blue-600">PLATONIC</h1>
+            </div>
+            <nav class="flex-1 px-4 py-4 sidebar-nav overflow-y-auto">
+                <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Sales & CRM</p>
+                <ul>
+                    <li>
+                        <a href="#" data-page="dashboard" class="nav-item flex items-center p-3 my-1 rounded-lg cursor-pointer transition-colors text-gray-600 hover:bg-gray-200 hover:text-gray-800 active">
+                            <i data-lucide="briefcase" class="nav-icon w-5 h-5"></i>
+                            <span class="ml-4 font-medium">Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-page="leads" class="nav-item flex items-center p-3 my-1 rounded-lg cursor-pointer transition-colors text-gray-600 hover:bg-gray-200 hover:text-gray-800">
+                            <i data-lucide="users" class="nav-icon w-5 h-5"></i>
+                            <span class="ml-4 font-medium">Leads</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-page="contacts" class="nav-item flex items-center p-3 my-1 rounded-lg cursor-pointer transition-colors text-gray-600 hover:bg-gray-200 hover:text-gray-800">
+                            <i data-lucide="building" class="nav-icon w-5 h-5"></i>
+                            <span class="ml-4 font-medium">Contacts</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-page="quotations" class="nav-item flex items-center p-3 my-1 rounded-lg cursor-pointer transition-colors text-gray-600 hover:bg-gray-200 hover:text-gray-800">
+                            <i data-lucide="file-text" class="nav-icon w-5 h-5"></i>
+                            <span class="ml-4 font-medium">Quotations</span>
+                        </a>
+                    </li>
+                </ul>
+                <p class="px-3 mt-6 text-xs font-semibold text-gray-400 uppercase tracking-wider">Finance (Locked)</p>
+                 <ul>
+                    <li class="flex items-center p-3 my-1 rounded-lg text-gray-400 cursor-not-allowed">
+                        <i data-lucide="dollar-sign" class="w-5 h-5"></i>
+                        <span class="ml-4 font-medium">Transactions</span>
+                    </li>
+                 </ul>
+            </nav>
+             <div class="p-4 border-t">
+                <div class="flex items-center">
+                    <img class="h-10 w-10 rounded-full object-cover" src="https://placehold.co/100x100/E2E8F0/4A5568?text=AU" alt="Admin User" />
+                    <div class="ml-3">
+                        <p class="text-sm font-semibold text-gray-800">Admin User</p>
+                        <p class="text-xs text-gray-500">admin@platonic.com</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6 lg:p-10 overflow-y-auto">
+            <!-- Dashboard Page -->
+            <div id="dashboard-page" class="page-content active space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-3xl font-bold text-gray-800">Sales Dashboard</h2>
+                    <div class="flex items-center space-x-2">
+                        <button id="new-quotation-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition duration-300 flex items-center">
+                            <i data-lucide="plus-circle" class="w-5 h-5 mr-2"></i>
+                            New Quotation
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Cards will be inserted here by JS -->
+                    <div id="dashboard-cards" class="contents"></div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                    <div class="lg:col-span-3 bg-white p-6 rounded-lg shadow-md border border-gray-100">
+                        <h3 class="text-lg font-semibold text-gray-700 mb-4">Monthly Revenue</h3>
+                        <div class="relative h-80">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md border border-gray-100">
+                        <h3 class="text-lg font-semibold text-gray-700 mb-4">Recent Leads</h3>
+                         <div id="recent-leads-list" class="space-y-4"></div>
+                    </div>
+                </div>
+                <div class="text-center mt-4">
+                  <button id="log-payment-btn" class="bg-green-600 text-white px-6 py-3 rounded-lg shadow hover:bg-green-700 transition duration-300 flex items-center mx-auto">
+                    <i data-lucide="dollar-sign" class="w-5 h-5 mr-2"></i>
+                    Log Received Payment (Revenue)
+                  </button>
+                </div>
+            </div>
+
+            <!-- Leads Page -->
+            <div id="leads-page" class="page-content space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-3xl font-bold text-gray-800">Leads</h2>
+                    <button id="add-lead-page-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition duration-300 flex items-center">
+                        <i data-lucide="plus-circle" class="w-5 h-5 mr-2"></i>
+                        Add Lead
+                    </button>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-md border border-gray-100">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-gray-500">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">Lead Name</th>
+                                    <th scope="col" class="px-6 py-3">Contact</th>
+                                    <th scope="col" class="px-6 py-3">Value</th>
+                                    <th scope="col" class="px-6 py-3">Status</th>
+                                    <th scope="col" class="px-6 py-3">Assigned To</th>
+                                    <th scope="col" class="px-6 py-3">Last Contact</th>
+                                    <th scope="col" class="px-6 py-3"><span class="sr-only">Actions</span></th>
+                                </tr>
+                            </thead>
+                            <tbody id="leads-table-body">
+                                <!-- Lead rows will be inserted here by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                     <div class="mt-6 p-4 border-2 border-dashed border-gray-300 rounded-lg text-center">
+                        <i data-lucide="map-pin" class="mx-auto text-gray-400 mb-2 w-8 h-8"></i>
+                        <h4 class="font-semibold text-gray-600">Lead Location Map</h4>
+                        <p class="text-sm text-gray-500">Map component for selecting lead location will be integrated here.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Add Lead Page -->
+            <div id="add-lead-page" class="page-content space-y-6">
+                <h2 class="text-3xl font-bold text-gray-800">Add New Lead</h2>
+                <div class="bg-white p-8 rounded-lg shadow-md border border-gray-100 max-w-4xl mx-auto">
+                    <form class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="lead-name" class="block text-sm font-medium text-gray-700">Lead Name / Project Title</label>
+                                <input type="text" id="lead-name" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2" placeholder="e.g., Downtown Tower Project">
+                            </div>
+                            <div>
+                                <label for="lead-contact-person" class="block text-sm font-medium text-gray-700">Contact Person</label>
+                                <input type="text" id="lead-contact-person" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2" placeholder="e.g., John Doe">
+                            </div>
+                            <div>
+                                <label for="lead-status" class="block text-sm font-medium text-gray-700">Status</label>
+                                <select id="lead-status" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2">
+                                    <option>New</option>
+                                    <option>Qualified</option>
+                                    <option>Proposal</option>
+                                    <option>Negotiation</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="lead-source" class="block text-sm font-medium text-gray-700">Source</label>
+                                <input type="text" id="lead-source" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2" placeholder="e.g., Website, Referral">
+                            </div>
+                            <div>
+                                <label for="lead-value" class="block text-sm font-medium text-gray-700">Estimated Value</label>
+                                <div class="relative mt-1 rounded-md shadow-sm">
+                                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"><span class="text-gray-500 sm:text-sm">$</span></div>
+                                    <input type="number" id="lead-value" class="block w-full rounded-md border-gray-300 pl-7 p-2" placeholder="500000">
+                                </div>
+                            </div>
+                            <div>
+                                <label for="lead-assigned" class="block text-sm font-medium text-gray-700">Assigned To</label>
+                                <select id="lead-assigned" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2">
+                                    <option>Alice</option>
+                                    <option>Bob</option>
+                                    <option>Charlie</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mt-6 p-4 border-2 border-dashed border-gray-300 rounded-lg text-center">
+                            <i data-lucide="map-pin" class="mx-auto text-gray-400 mb-2 w-8 h-8"></i>
+                            <h4 class="font-semibold text-gray-600">Select Lead Location</h4>
+                            <p class="text-sm text-gray-500">Interactive map component will be integrated here.</p>
+                        </div>
+                        <div class="flex justify-end space-x-3 pt-4">
+                            <button type="button" id="cancel-add-lead-btn" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100">Cancel</button>
+                            <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700">Save Lead</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Contacts Page -->
+            <div id="contacts-page" class="page-content space-y-6">
+                 <div class="flex justify-between items-center">
+                    <h2 class="text-3xl font-bold text-gray-800">Contacts</h2>
+                    <button id="add-contact-page-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition duration-300 flex items-center">
+                        <i data-lucide="plus-circle" class="w-5 h-5 mr-2"></i>
+                        Add Contact
+                    </button>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-md border border-gray-100">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-gray-500">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">Company Name</th>
+                                    <th scope="col" class="px-6 py-3">Type</th>
+                                    <th scope="col" class="px-6 py-3">Industry</th>
+                                    <th scope="col" class="px-6 py-3">Contact Info</th>
+                                    <th scope="col" class="px-6 py-3">Active Projects</th>
+                                    <th scope="col" class="px-6 py-3"><span class="sr-only">Actions</span></th>
+                                </tr>
+                            </thead>
+                            <tbody id="contacts-table-body">
+                                <!-- Contact rows will be inserted here by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Contact Page -->
+            <div id="add-contact-page" class="page-content space-y-6">
+                <h2 class="text-3xl font-bold text-gray-800">Add New Contact</h2>
+                <div class="bg-white p-8 rounded-lg shadow-md border border-gray-100 max-w-4xl mx-auto">
+                    <form class="space-y-6">
+                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="contact-name" class="block text-sm font-medium text-gray-700">Company Name</label>
+                                <input type="text" id="contact-name" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2" placeholder="e.g., Global Construction Inc.">
+                            </div>
+                            <div>
+                                <label for="contact-type" class="block text-sm font-medium text-gray-700">Contact Type</label>
+                                <select id="contact-type" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2">
+                                    <option>Client</option>
+                                    <option>Supplier</option>
+                                    <option>Subcontractor</option>
+                                    <option>Consultant</option>
+                                </select>
+                            </div>
+                             <div>
+                                <label for="contact-industry" class="block text-sm font-medium text-gray-700">Industry</label>
+                                <input type="text" id="contact-industry" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2" placeholder="e.g., Commercial Construction">
+                            </div>
+                            <div>
+                                <label for="contact-phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                                <input type="tel" id="contact-phone" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2" placeholder="e.g., 555-0101">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="contact-email" class="block text-sm font-medium text-gray-700">Email Address</label>
+                                <input type="email" id="contact-email" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2" placeholder="e.g., contact@globalcon.com">
+                            </div>
+                             <div class="md:col-span-2">
+                                <label for="contact-address" class="block text-sm font-medium text-gray-700">Address</label>
+                                <textarea id="contact-address" rows="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2" placeholder="123 Main Street, Suite 400, Metropolis"></textarea>
+                            </div>
+                        </div>
+                        <div class="flex justify-end space-x-3 pt-4">
+                            <button type="button" id="cancel-add-contact-btn" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100">Cancel</button>
+                            <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700">Save Contact</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Quotations Page -->
+            <div id="quotations-page" class="page-content space-y-6">
+                 <div class="space-y-6 max-w-5xl mx-auto">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-3xl font-bold text-gray-800">Quotation Generator</h2>
+                    </div>
+                    <div class="bg-white p-8 rounded-lg shadow-lg border border-gray-100">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-800 mb-2">From:</h3>
+                                <p class="font-bold text-blue-600">PLATONIC A.E.C. Solutions</p>
+                                <p class="text-gray-600">123 Innovation Drive, Tech City</p>
+                            </div>
+                            <div class="text-right">
+                                 <h3 class="text-lg font-semibold text-gray-800 mb-2">To:</h3>
+                                 <select id="quote-client-select" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">Select a Client</option>
+                                 </select>
+                            </div>
+                        </div>
+                        <div class="mb-6">
+                            <table id="quote-items-table" class="w-full">
+                                <thead>
+                                    <tr class="bg-gray-50">
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                                        <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Qty</th>
+                                        <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Unit Price</th>
+                                        <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                                        <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="quote-items-body" class="bg-white divide-y divide-gray-200 md:divide-y-0">
+                                    <!-- Quote items will be inserted here by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <button id="open-add-item-modal-btn" class="text-blue-600 hover:text-blue-800 font-semibold flex items-center">
+                            <i data-lucide="plus-circle" class="w-5 h-5 mr-2"></i> Add Item
+                        </button>
+                        <div class="flex justify-end mt-8">
+                            <div class="w-full max-w-xs space-y-2">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Subtotal:</span>
+                                    <span id="quote-subtotal" class="font-medium text-gray-800">$0.00</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Tax (5%):</span>
+                                    <span id="quote-tax" class="font-medium text-gray-800">$0.00</span>
+                                </div>
+                                <div class="flex justify-between border-t pt-2 mt-2">
+                                    <span class="font-bold text-lg text-gray-900">Total:</span>
+                                    <span id="quote-total" class="font-bold text-lg text-gray-900">$0.00</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-end mt-8 space-x-3">
+                            <button class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100">Save Draft</button>
+                            <button class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700">Generate & Send</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Financial Transaction Modal -->
+    <div id="financial-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center hidden">
+        <div class="bg-white rounded-lg shadow-2xl p-8 w-full max-w-lg m-4">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">Log Financial Transaction</h3>
+                <button id="close-financial-modal-btn" class="text-gray-400 hover:text-gray-600">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <!-- Content from previous version -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Transaction Type</label>
+                    <input type="text" value="Revenue" disabled class="mt-1 block w-full bg-gray-100 border-gray-300 rounded-md shadow-sm p-2" />
+                </div>
+                <div>
+                    <label for="modal-client" class="block text-sm font-medium text-gray-700">Client Name</label>
+                    <select id="modal-client" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2"></select>
+                </div>
+                <div>
+                    <label for="modal-project" class="block text-sm font-medium text-gray-700">Associated Project</label>
+                    <select id="modal-project" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2"></select>
+                </div>
+                <div>
+                    <label for="invoiceNumber" class="block text-sm font-medium text-gray-700">Invoice Number</label>
+                    <input type="text" id="invoiceNumber" placeholder="e.g., INV-2025-001" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2" />
+                </div>
+                <div>
+                    <label for="amount" class="block text-sm font-medium text-gray-700">Amount</label>
+                    <div class="relative mt-1 rounded-md shadow-sm">
+                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"><span class="text-gray-500 sm:text-sm">$</span></div>
+                        <input type="number" id="amount" placeholder="0.00" class="block w-full rounded-md border-gray-300 pl-7 pr-12 p-2" />
+                    </div>
+                </div>
+                <div class="flex items-center justify-between pt-2">
+                    <span class="text-sm font-medium text-gray-700">Payment Received?</span>
+                    <label for="receivedToggle" class="inline-flex relative items-center cursor-pointer">
+                      <input type="checkbox" value="" id="receivedToggle" class="sr-only peer" />
+                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    </label>
+                </div>
+            </div>
+            <div class="mt-8 flex justify-end space-x-3">
+                <button id="cancel-financial-modal-btn" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100">Cancel</button>
+                <button class="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700">Save Transaction</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Quotation Item Modal -->
+    <div id="add-item-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center hidden">
+        <div class="bg-white rounded-lg shadow-2xl p-8 w-full max-w-lg m-4">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">Add Quotation Item</h3>
+                <button id="close-add-item-modal-btn" class="text-gray-400 hover:text-gray-600">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <form id="add-item-form" class="space-y-4">
+                <div>
+                    <label for="item-name" class="block text-sm font-medium text-gray-700">Item Name</label>
+                    <input type="text" id="item-name" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2" placeholder="e.g., Structural Engineering Analysis">
+                </div>
+                <div>
+                    <label for="item-description" class="block text-sm font-medium text-gray-700">Description</label>
+                    <textarea id="item-description" rows="2" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2" placeholder="e.g., Seismic and load-bearing calculations"></textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="item-quantity" class="block text-sm font-medium text-gray-700">Quantity</label>
+                        <input type="number" id="item-quantity" value="1" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2">
+                    </div>
+                    <div>
+                        <label for="item-price" class="block text-sm font-medium text-gray-700">Unit Price</label>
+                        <div class="relative mt-1 rounded-md shadow-sm">
+                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"><span class="text-gray-500 sm:text-sm">$</span></div>
+                            <input type="number" id="item-price" value="0" required step="0.01" class="block w-full rounded-md border-gray-300 pl-7 p-2">
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8 flex justify-end space-x-3">
+                    <button type="button" id="cancel-add-item-modal-btn" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700">Add Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- DATA (Simulating API response) ---
+            const mockLeads = [
+                { id: 1, name: 'Downtown Tower Project', contact: 'John Doe', status: 'New', source: 'Website', value: 500000, assignedTo: 'Alice', lastContact: '2025-07-15' },
+                { id: 2, name: 'Suburban Mall Expansion', contact: 'Jane Smith', status: 'Qualified', source: 'Referral', value: 1200000, assignedTo: 'Bob', lastContact: '2025-07-14' },
+                { id: 3, name: 'Residential Complex HVAC', contact: 'Peter Jones', status: 'Proposal', source: 'Cold Call', value: 75000, assignedTo: 'Alice', lastContact: '2025-07-12' },
+                { id: 4, name: 'City Bridge Reinforcement', contact: 'Mary Williams', status: 'Won', source: 'Website', value: 2500000, assignedTo: 'Charlie', lastContact: '2025-07-10' },
+                { id: 5, name: 'Industrial Park Development', contact: 'David Brown', status: 'Lost', source: 'Partner', value: 3000000, assignedTo: 'Bob', lastContact: '2025-07-05' },
+            ];
+
+            const mockContacts = [
+                { id: 1, name: 'Global Construction Inc.', type: 'Client', industry: 'Commercial', phone: '555-0101', email: 'contact@globalcon.com', projects: 3 },
+                { id: 2, name: 'Steel Beams Ltd.', type: 'Supplier', industry: 'Materials', phone: '555-0102', email: 'sales@steelbeams.com', projects: 0 },
+                { id: 3, name: 'Prestige Real Estate', type: 'Client', industry: 'Real Estate', phone: '555-0103', email: 'dev@prestigere.com', projects: 5 },
+                { id: 4, name: 'Concrete Solutions Co.', type: 'Supplier', industry: 'Materials', phone: '555-0104', email: 'orders@concretes.co', projects: 0 },
+            ];
+            
+            let quoteItems = [
+                { id: 1, name: 'Initial Design & Blueprint', description: 'Phase 1 architectural drawings', quantity: 1, unitPrice: 15000 },
+                { id: 2, name: 'Structural Engineering Analysis', description: 'Seismic and load-bearing calculations', quantity: 1, unitPrice: 25000 },
+                { id: 3, name: 'Project Management Fee', description: '5% of estimated construction cost', quantity: 1, unitPrice: 60000 },
+            ];
+
+            // --- INITIALIZE ICONS ---
+            lucide.createIcons();
+
+            // --- PAGE NAVIGATION ---
+            const navLinks = document.querySelectorAll('.nav-item');
+            const pages = document.querySelectorAll('.page-content');
+
+            function switchPage(pageId) {
+                pages.forEach(page => page.classList.remove('active'));
+                navLinks.forEach(link => link.classList.remove('active'));
+
+                const pageToShow = document.getElementById(`${pageId}-page`);
+                if (pageToShow) {
+                    pageToShow.classList.add('active');
+                }
+                
+                const linkToActivate = document.querySelector(`.nav-item[data-page="${pageId}"]`);
+                if (linkToActivate) {
+                    linkToActivate.classList.add('active');
+                }
+                lucide.createIcons(); // Re-render icons on new forms
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const pageId = e.currentTarget.dataset.page;
+                    switchPage(pageId);
+                });
+            });
+            
+            document.getElementById('new-quotation-btn').addEventListener('click', () => switchPage('quotations'));
+            document.getElementById('add-lead-page-btn').addEventListener('click', () => switchPage('add-lead'));
+            document.getElementById('add-contact-page-btn').addEventListener('click', () => switchPage('add-contact'));
+            
+            document.getElementById('cancel-add-lead-btn').addEventListener('click', () => switchPage('leads'));
+            document.getElementById('cancel-add-contact-btn').addEventListener('click', () => switchPage('contacts'));
+
+
+            // --- MODAL HANDLING ---
+            const financialModal = document.getElementById('financial-modal');
+            document.getElementById('log-payment-btn').addEventListener('click', () => financialModal.classList.remove('hidden'));
+            document.getElementById('close-financial-modal-btn').addEventListener('click', () => financialModal.classList.add('hidden'));
+            document.getElementById('cancel-financial-modal-btn').addEventListener('click', () => financialModal.classList.add('hidden'));
+
+            const addItemModal = document.getElementById('add-item-modal');
+            const addItemForm = document.getElementById('add-item-form');
+            document.getElementById('open-add-item-modal-btn').addEventListener('click', () => addItemModal.classList.remove('hidden'));
+            document.getElementById('close-add-item-modal-btn').addEventListener('click', () => {
+                addItemModal.classList.add('hidden');
+                addItemForm.reset();
+            });
+            document.getElementById('cancel-add-item-modal-btn').addEventListener('click', () => {
+                addItemModal.classList.add('hidden');
+                addItemForm.reset();
+            });
+
+
+            // --- DASHBOARD RENDERING ---
+            function renderDashboard() {
+                const cardContainer = document.getElementById('dashboard-cards');
+                const cardData = [
+                    { title: "New Leads", value: "12", icon: "users", change: "+5.4%", changeType: "increase" },
+                    { title: "Deals in Pipeline", value: "47", icon: "briefcase", change: "-1.2%", changeType: "decrease" },
+                    { title: "Quotations Sent", value: "23", icon: "file-text", change: "+10.1%", changeType: "increase" },
+                    { title: "Deals Won (This Month)", value: "$1.2M", icon: "dollar-sign", change: "+20.5%", changeType: "increase" },
+                ];
+                cardContainer.innerHTML = cardData.map(card => `
+                    <div class="bg-white p-6 rounded-lg shadow-md border border-gray-100">
+                        <div class="flex justify-between items-start">
+                            <div class="flex flex-col">
+                                <p class="text-sm text-gray-500">${card.title}</p>
+                                <p class="text-3xl font-bold text-gray-800">${card.value}</p>
+                            </div>
+                            <div class="bg-blue-100 text-blue-600 p-3 rounded-full">
+                                <i data-lucide="${card.icon}" class="w-6 h-6"></i>
+                            </div>
+                        </div>
+                        <p class="text-xs mt-2 ${card.changeType === 'increase' ? 'text-green-500' : 'text-red-500'}">
+                            ${card.change} vs last month
+                        </p>
+                    </div>
+                `).join('');
+
+                const recentLeadsList = document.getElementById('recent-leads-list');
+                recentLeadsList.innerHTML = mockLeads.slice(0, 4).map(lead => `
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="font-medium text-gray-800">${lead.name}</p>
+                            <p class="text-sm text-gray-500">${lead.contact}</p>
+                        </div>
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full ${ getStatusClass(lead.status).bg } ${ getStatusClass(lead.status).text }">${lead.status}</span>
+                    </div>
+                `).join('');
+
+                // BUG FIX: Destroy previous chart instance before creating a new one.
+                const ctx = document.getElementById('revenueChart').getContext('2d');
+                if(window.revenueChart instanceof Chart) {
+                    window.revenueChart.destroy();
+                }
+                window.revenueChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Revenue',
+                            data: [40000, 30000, 50000, 45000, 60000, 75000],
+                            backgroundColor: '#3B82F6',
+                            borderRadius: 4,
+                            barThickness: 30,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false, // Added for better responsive behavior
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { 
+                                beginAtZero: true,
+                                grid: { drawBorder: false },
+                                ticks: { callback: (value) => `$${value/1000}k` }
+                            },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
+                
+                lucide.createIcons();
+            }
+
+            // --- LEADS & CONTACTS PAGE RENDERING ---
+            function getStatusClass(status) {
+                switch (status) {
+                    case 'New': return { bg: 'bg-blue-100', text: 'text-blue-800' };
+                    case 'Qualified': return { bg: 'bg-yellow-100', text: 'text-yellow-800' };
+                    case 'Proposal': return { bg: 'bg-purple-100', text: 'text-purple-800' };
+                    case 'Won': return { bg: 'bg-green-100', text: 'text-green-800' };
+                    case 'Lost': return { bg: 'bg-red-100', text: 'text-red-800' };
+                    default: return { bg: 'bg-gray-100', text: 'text-gray-800' };
+                }
+            }
+
+            function renderLeadsTable() {
+                const tableBody = document.getElementById('leads-table-body');
+                tableBody.innerHTML = mockLeads.map(lead => `
+                    <tr class="bg-white border-b hover:bg-gray-50">
+                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">${lead.name}</th>
+                        <td class="px-6 py-4">${lead.contact}</td>
+                        <td class="px-6 py-4">$${lead.value.toLocaleString()}</td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 font-semibold text-xs rounded-full ${getStatusClass(lead.status).bg} ${getStatusClass(lead.status).text}">${lead.status}</span>
+                        </td>
+                        <td class="px-6 py-4">${lead.assignedTo}</td>
+                        <td class="px-6 py-4">${lead.lastContact}</td>
+                        <td class="px-6 py-4 text-right">
+                            <button class="text-gray-500 hover:text-blue-600"><i data-lucide="more-horizontal"></i></button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+            function renderContactsTable() {
+                const tableBody = document.getElementById('contacts-table-body');
+                tableBody.innerHTML = mockContacts.map(contact => `
+                    <tr class="bg-white border-b hover:bg-gray-50">
+                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap flex items-center">
+                            <i data-lucide="building" class="mr-3 text-gray-400 w-5 h-5"></i>
+                            ${contact.name}
+                        </th>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 font-semibold text-xs rounded-full ${contact.type === 'Client' ? 'bg-green-100 text-green-800' : 'bg-indigo-100 text-indigo-800'}">${contact.type}</span>
+                        </td>
+                        <td class="px-6 py-4">${contact.industry}</td>
+                        <td class="px-6 py-4">
+                            <div class="flex items-center space-x-2 text-xs"><i data-lucide="phone" class="w-3.5 h-3.5"></i> <span>${contact.phone}</span></div>
+                            <div class="flex items-center space-x-2 mt-1 text-xs"><i data-lucide="mail" class="w-3.5 h-3.5"></i> <span>${contact.email}</span></div>
+                        </td>
+                        <td class="px-6 py-4 font-medium">${contact.type === 'Client' ? contact.projects : 'N/A'}</td>
+                        <td class="px-6 py-4 text-right">
+                            <button class="text-gray-500 hover:text-blue-600"><i data-lucide="more-horizontal"></i></button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+            // --- QUOTATION PAGE ---
+            const quoteItemsBody = document.getElementById('quote-items-body');
+
+            function renderQuoteItems() {
+                quoteItemsBody.innerHTML = quoteItems.map(item => `
+                    <tr data-id="${item.id}" class="border-b">
+                        <td data-label="Item" class="px-4 py-2"><input type="text" value="${item.name}" data-field="name" class="w-full p-1 border-gray-300 rounded"/></td>
+                        <td data-label="Description" class="px-4 py-2"><input type="text" value="${item.description}" data-field="description" class="w-full p-1 border-gray-300 rounded"/></td>
+                        <td data-label="Qty" class="px-4 py-2 text-center"><input type="number" value="${item.quantity}" data-field="quantity" class="w-20 p-1 border-gray-300 rounded text-center"/></td>
+                        <td data-label="Unit Price" class="px-4 py-2 text-right"><input type="number" value="${item.unitPrice}" data-field="unitPrice" class="w-28 p-1 border-gray-300 rounded text-right"/></td>
+                        <td data-label="Total" class="px-4 py-2 text-right font-medium text-gray-800 item-total">$${(item.quantity * item.unitPrice).toLocaleString()}</td>
+                        <td data-label="Action" class="action-cell px-4 py-2 text-center">
+                            <button class="remove-item-btn text-red-500 hover:text-red-700"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
+                        </td>
+                    </tr>
+                `).join('');
+                calculateQuoteTotals();
+                lucide.createIcons();
+            }
+            
+            function calculateQuoteTotals() {
+                const subtotal = quoteItems.reduce((acc, item) => acc + (item.quantity * item.unitPrice), 0);
+                const tax = subtotal * 0.05;
+                const total = subtotal + tax;
+
+                document.getElementById('quote-subtotal').textContent = `$${subtotal.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+                document.getElementById('quote-tax').textContent = `$${tax.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+                document.getElementById('quote-total').textContent = `$${total.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+            }
+            
+            addItemForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const newItem = {
+                    id: Date.now(),
+                    name: document.getElementById('item-name').value,
+                    description: document.getElementById('item-description').value,
+                    quantity: parseFloat(document.getElementById('item-quantity').value) || 1,
+                    unitPrice: parseFloat(document.getElementById('item-price').value) || 0,
+                };
+                quoteItems.push(newItem);
+                renderQuoteItems();
+                addItemModal.classList.add('hidden');
+                addItemForm.reset();
+            });
+
+            quoteItemsBody.addEventListener('click', (e) => {
+                if (e.target.closest('.remove-item-btn')) {
+                    const row = e.target.closest('tr');
+                    const id = parseInt(row.dataset.id);
+                    quoteItems = quoteItems.filter(item => item.id !== id);
+                    renderQuoteItems();
+                }
+            });
+
+            quoteItemsBody.addEventListener('input', (e) => {
+                if (e.target.tagName === 'INPUT') {
+                    const row = e.target.closest('tr');
+                    const id = parseInt(row.dataset.id);
+                    const field = e.target.dataset.field;
+                    const value = e.target.type === 'number' ? parseFloat(e.target.value) || 0 : e.target.value;
+
+                    const itemIndex = quoteItems.findIndex(item => item.id === id);
+                    if (itemIndex > -1) {
+                        quoteItems[itemIndex][field] = value;
+                        const itemTotalEl = row.querySelector('.item-total');
+                        itemTotalEl.textContent = `$${(quoteItems[itemIndex].quantity * quoteItems[itemIndex].unitPrice).toLocaleString()}`;
+                        calculateQuoteTotals();
+                    }
+                }
+            });
+
+            function populateSelects() {
+                const clientSelect = document.getElementById('quote-client-select');
+                const modalClientSelect = document.getElementById('modal-client');
+                const modalProjectSelect = document.getElementById('modal-project');
+                
+                const clientOptions = mockContacts.filter(c => c.type === 'Client').map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+                clientSelect.innerHTML = '<option value="">Select a Client</option>' + clientOptions;
+                modalClientSelect.innerHTML = '<option value="">Select Client...</option>' + clientOptions;
+
+                const projectOptions = mockLeads.filter(l => l.status === 'Won').map(l => `<option value="${l.id}">${l.name}</option>`).join('');
+                modalProjectSelect.innerHTML = '<option value="">Select Project...</option>' + projectOptions;
+            }
+
+            // --- INITIAL LOAD ---
+            renderDashboard();
+            renderLeadsTable();
+            renderContactsTable();
+            renderQuoteItems();
+            populateSelects();
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
