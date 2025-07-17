@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Platonic Dashboard</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        // Set theme on page load to prevent flashing. This is a best practice.
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark')
+        } else {
+          document.documentElement.classList.remove('dark')
+        }
+    </script>
+
+    <style>
+        /* Apply the Inter font family */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom styles for the dark mode background pattern */
+        .dark .dark-main-bg {
+            background-color: #0a0a0a;
+            background-image: radial-gradient(circle at 1px 1px, #2a2a2a 1px, transparent 0);
+            background-size: 2rem 2rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:dark-main-bg text-gray-800 dark:text-gray-200 transition-colors duration-300">
+
+    <!-- Theme Toggle Button -->
+    <div class="absolute top-5 right-5">
+        <button id="theme-toggle" class="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 dark:focus:ring-offset-gray-900 focus:ring-purple-500">
+            <!-- Moon Icon -->
+            <svg id="theme-toggle-dark-icon" class="hidden h-6 w-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <!-- Sun Icon -->
+            <svg id="theme-toggle-light-icon" class="hidden h-6 w-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zM3 11a1 1 0 100-2H2a1 1 0 100 2h1zM6.465 14.95l-.708.707a1 1 0 001.414 1.414l.708-.707a1 1 0 00-1.414-1.414zM14.95 6.464a1 1 0 00-1.414-1.414l-.708.707a1 1 0 101.414 1.414l.708-.707z"></path></svg>
+        </button>
+    </div>
+
+    <!-- Custom Alert Message Box -->
+    <div id="alert-box" class="fixed top-5 right-5 z-50 transition-transform transform translate-x-[150%] duration-500 ease-in-out">
+        <div id="alert-content" class="flex items-center p-4 rounded-lg shadow-lg text-white backdrop-blur-sm">
+            <span id="alert-icon" class="mr-3"></span>
+            <span id="alert-message"></span>
+        </div>
+    </div>
+
+    <!-- Main container to center the login card -->
+    <div class="min-h-screen flex items-center justify-center p-4">
+
+        <!-- Login Card -->
+        <div class="w-full max-w-md bg-white dark:bg-gray-900/60 dark:backdrop-blur-xl border border-gray-200 dark:border-gray-700/50 rounded-2xl shadow-lg dark:shadow-2xl dark:shadow-purple-500/10 overflow-hidden">
+            <div class="p-8 sm:p-10">
+                
+                <!-- Header -->
+                <div class="text-center mb-8">
+                    <h1 class="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-indigo-600">
+                        Platonic Dashboard
+                    </h1>
+                    <p class="text-gray-500 dark:text-gray-400 mt-2">Sign in to access your workspace</p>
+                </div>
+
+                <!-- Login Form -->
+                <form id="login-form" action="#" method="POST" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    <!-- Username Input -->
+                    <div>
+                        <label for="username" class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Username</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                                <svg class="h-5 w-5 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                                </svg>
+                            </span>
+                            <input 
+                                type="text" 
+                                id="username" 
+                                name="username" 
+                                placeholder="your_username"
+                                required
+                                class="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-300"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Password Input -->
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Password</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                                <svg class="h-5 w-5 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clip-rule="evenodd" />
+                                </svg>
+                            </span>
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                placeholder="••••••••"
+                                required
+                                class="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-300"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Forgot Password Link -->
+                    <div class="text-right">
+                        <a href="#" class="text-sm text-purple-600 dark:text-purple-400 hover:underline transition duration-300">
+                            Forgot Password?
+                        </a>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <div>
+                        <button 
+                            type="submit"
+                            id="submit"
+                            class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-md text-sm font-semibold text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 dark:focus:ring-offset-gray-900 focus:ring-purple-500 transition-all duration-300 transform hover:scale-105"
+                        >
+                            Sign In
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- FIXED Theme Toggle Logic ---
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+        const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+        const htmlElement = document.documentElement;
+
+        // This function updates the icons based on the current theme
+        function updateThemeIcons() {
+            if (htmlElement.classList.contains('dark')) {
+                themeToggleDarkIcon.classList.add('hidden');
+                themeToggleLightIcon.classList.remove('hidden');
+            } else {
+                themeToggleDarkIcon.classList.remove('hidden');
+                themeToggleLightIcon.classList.add('hidden');
+            }
+        }
+
+        // This function handles the click event
+        themeToggleBtn.addEventListener('click', function() {
+            // Toggle the dark class on the root html element
+            htmlElement.classList.toggle('dark');
+
+            // Update localStorage based on the new theme
+            if (htmlElement.classList.contains('dark')) {
+                localStorage.setItem('theme', 'dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+            }
+            
+            // Update the icons to reflect the new theme
+            updateThemeIcons();
+        });
+
+        // Set the correct icon on initial page load
+        updateThemeIcons();
+
+
+        // --- Custom Alert Logic (unchanged) ---
+        const loginForm = document.getElementById('login-form');
+        const alertBox = document.getElementById('alert-box');
+        const alertContent = document.getElementById('alert-content');
+        const alertIcon = document.getElementById('alert-icon');
+        const alertMessage = document.getElementById('alert-message');
+
+        let alertTimeout;
+
+        function showMessage(message, type = 'success') {
+            clearTimeout(alertTimeout);
+            const styles = {
+                success: {
+                    bg: 'bg-green-500/80',
+                    border: 'border-green-400/50',
+                    icon: `<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>`
+                },
+                error: {
+                    bg: 'bg-red-500/80',
+                    border: 'border-red-400/50',
+                    icon: `<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>`
+                }
+            };
+            const config = styles[type];
+            alertContent.className = `flex items-center p-4 rounded-lg shadow-lg text-white backdrop-blur-sm ${config.bg} ${config.border}`;
+            alertIcon.innerHTML = config.icon;
+            alertMessage.textContent = message;
+            alertBox.classList.remove('translate-x-[150%]');
+            alertBox.classList.add('translate-x-0');
+            alertTimeout = setTimeout(() => {
+                alertBox.classList.remove('translate-x-0');
+                alertBox.classList.add('translate-x-[150%]');
+            }, 4000);
+        }
+    </script>
+
+</body>
+</html>
