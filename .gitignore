@@ -1,0 +1,4 @@
+# Ignore environment variables file. This is crucial for security.
+.env
+db.sqlite3
+Environment Variables.txt
