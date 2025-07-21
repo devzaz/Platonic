@@ -242,50 +242,43 @@
             <div id="add-lead-page" class="page-content space-y-6">
                 <h2 class="text-3xl font-bold text-gray-800">Add New Lead</h2>
                 <div class="bg-white p-8 rounded-lg shadow-md border border-gray-100 max-w-4xl mx-auto">
-                    <form class="space-y-6">
+                    <form class="space-y-6" method="post" action="{% url 'add_lead' %}">
+                        {% csrf_token %}
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label for="lead-name" class="block text-sm font-medium text-gray-700">Lead Name / Project Title</label>
-                                <input type="text" id="lead-name" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2" placeholder="e.g., Downtown Tower Project">
-                            </div>
-                            <div>
-                                <label for="lead-contact-person" class="block text-sm font-medium text-gray-700">Contact Person</label>
-                                <input type="text" id="lead-contact-person" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2" placeholder="e.g., John Doe">
+                                <label for="lead-Contact" class="block text-sm font-medium text-gray-700">Contact</label>
+                                {{ lead_form.Contact }}
                             </div>
                             <div>
                                 <label for="lead-status" class="block text-sm font-medium text-gray-700">Status</label>
-                                <select id="lead-status" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2">
-                                    <option>New</option>
-                                    <option>Qualified</option>
-                                    <option>Proposal</option>
-                                    <option>Negotiation</option>
-                                </select>
+                                {{lead_form.status}}
                             </div>
                             <div>
                                 <label for="lead-source" class="block text-sm font-medium text-gray-700">Source</label>
-                                <input type="text" id="lead-source" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2" placeholder="e.g., Website, Referral">
+                                {{lead_form.source}}
                             </div>
                             <div>
                                 <label for="lead-value" class="block text-sm font-medium text-gray-700">Estimated Value</label>
                                 <div class="relative mt-1 rounded-md shadow-sm">
                                     <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"><span class="text-gray-500 sm:text-sm">$</span></div>
-                                    <input type="number" id="lead-value" class="block w-full rounded-md border-gray-300 pl-7 p-2" placeholder="500000">
+                                    {{lead_form.estimated_value}}
                                 </div>
                             </div>
                             <div>
                                 <label for="lead-assigned" class="block text-sm font-medium text-gray-700">Assigned To</label>
-                                <select id="lead-assigned" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2">
-                                    <option>Alice</option>
-                                    <option>Bob</option>
-                                    <option>Charlie</option>
-                                </select>
+                                {{lead_form.assign_to}}
+                            </div>
+                            <div>
+                                <label for="lead-description" class="block text-sm font-medium text-gray-700">Description</label>
+                                {{lead_form.description}}
                             </div>
                         </div>
-                        <div class="mt-6 p-4 border-2 border-dashed border-gray-300 rounded-lg text-center">
+                        <!-- <div class="mt-6 p-4 border-2 border-dashed border-gray-300 rounded-lg text-center">
                             <i data-lucide="map-pin" class="mx-auto text-gray-400 mb-2 w-8 h-8"></i>
                             <h4 class="font-semibold text-gray-600">Select Lead Location</h4>
                             <p class="text-sm text-gray-500">Interactive map component will be integrated here.</p>
-                        </div>
+                        </div> -->
                         <div class="flex justify-end space-x-3 pt-4">
                             <button type="button" id="cancel-add-lead-btn" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100">Cancel</button>
                             <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700">Save Lead</button>

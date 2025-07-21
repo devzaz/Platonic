@@ -8,6 +8,16 @@ class Project(models.Model):
     """
     Represents a single construction/ architecture project
     """
+
+    PHASE_CHOICES = (
+        ('pre_design', 'Pre-Design'),
+        ('schematic_design', 'Schematic Design'),
+        ('design_development', 'Design Development'),
+        ('construction_docs', 'Construction Documents'),
+        ('bidding', 'Bidding'),
+        ('construction', 'Construction'),
+        ('post_construction', 'Post-Construction'),
+    )
     STATUS_CHOICE = (
         ('pending', "Pending"),
         ('active', 'Active'),
@@ -22,6 +32,7 @@ class Project(models.Model):
         null=True,
         blank=True
     )
+    phase = models.CharField(max_length=30, choices=PHASE_CHOICES, default='pre_design')
     status = models.CharField(max_length=50, choices=STATUS_CHOICE, default='pending')
     budget = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
     start_date = models.DateField(null=True, blank=True)
@@ -49,6 +60,22 @@ class FinancialTransaction(models.Model):
         help_text="The project this transaction is associated with."
     )
     # The 'Client Name' is derived from project.client.name
+
+    vendor = models.ForeignKey(
+        Contact,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True, # Make it optional, as it only applies to expenses
+        limit_choices_to={'contact_type': 'supplier'}, # Ensures only suppliers can be chosen
+        help_text="The vendor/supplier for this expense."
+    )
+
+    payment_method = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        help_text="e.g., 'Bank Transfer', 'Cash', 'Credit Card'"
+    )
 
     amount = models.DecimalField(
         max_digits=12,
