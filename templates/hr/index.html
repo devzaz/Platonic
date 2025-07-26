@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLATONIC ERP - Phase 4</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Chart.js for charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom Styles -->
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .sidebar-nav::-webkit-scrollbar { width: 4px; }
+        .sidebar-nav::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
+        .nav-item.active {
+            background-color: #2563eb;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .nav-item.active .nav-icon { color: white; }
+        .page-content { display: none; }
+        .page-content.active { display: block; }
+    </style>
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    
+    <!-- Mobile Menu Toggle Button -->
+    <button id="menu-toggle-btn" class="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-md shadow-md text-gray-600 hover:bg-gray-100">
+        <i data-lucide="menu" class="w-6 h-6"></i>
+    </button>
+
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="w-64 bg-white shadow-lg flex flex-col shrink-0 fixed lg:static h-full z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
+            <div class="flex items-center justify-between h-20 border-b px-4">
+                <h1 class="text-2xl font-bold text-blue-600">PLATONIC</h1>
+                <button id="sidebar-close-btn" class="lg:hidden text-gray-600 hover:text-gray-800">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <nav class="flex-1 px-4 py-4 sidebar-nav overflow-y-auto">
+                <!-- HR Section -->
+                <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Human Resources</p>
+                <ul>
+                    <li><a href="#" data-page="hr-dashboard" class="nav-item flex items-center p-3 my-1 rounded-lg active"><i data-lucide="heart-pulse" class="nav-icon w-5 h-5"></i><span class="ml-4 font-medium">HR Dashboard</span></a></li>
+                    <li><a href="#" data-page="employees" class="nav-item flex items-center p-3 my-1 rounded-lg"><i data-lucide="users" class="nav-icon w-5 h-5"></i><span class="ml-4 font-medium">Employees</span></a></li>
+                    <li><a href="#" data-page="payroll" class="nav-item flex items-center p-3 my-1 rounded-lg"><i data-lucide="banknote" class="nav-icon w-5 h-5"></i><span class="ml-4 font-medium">Payroll</span></a></li>
+                </ul>
+                 <!-- Legal Section -->
+                <p class="px-3 mt-6 text-xs font-semibold text-gray-400 uppercase tracking-wider">Legal</p>
+                <ul>
+                    <li><a href="#" data-page="legal-dashboard" class="nav-item flex items-center p-3 my-1 rounded-lg"><i data-lucide="scale" class="nav-icon w-5 h-5"></i><span class="ml-4 font-medium">Legal Dashboard</span></a></li>
+                    <li><a href="#" data-page="contracts" class="nav-item flex items-center p-3 my-1 rounded-lg"><i data-lucide="file-signature" class="nav-icon w-5 h-5"></i><span class="ml-4 font-medium">Contracts</span></a></li>
+                </ul>
+                <!-- Employee Self-Service -->
+                <p class="px-3 mt-6 text-xs font-semibold text-gray-400 uppercase tracking-wider">Self-Service</p>
+                <ul>
+                    <li><a href="#" data-page="leave" class="nav-item flex items-center p-3 my-1 rounded-lg"><i data-lucide="calendar-plus" class="nav-icon w-5 h-5"></i><span class="ml-4 font-medium">Leave Request</span></a></li>
+                </ul>
+            </nav>
+             <div class="p-4 border-t">
+                <div class="flex items-center">
+                    <img class="h-10 w-10 rounded-full object-cover" src="https://placehold.co/100x100/E2E8F0/4A5568?text=HR" alt="HR User" />
+                    <div class="ml-3">
+                        <p class="text-sm font-semibold text-gray-800">HR Admin</p>
+                        <p class="text-xs text-gray-500">hr@platonic.com</p>
+                    </div>
+                </div>
+                <button id="logout-btn" class="w-full mt-4 flex items-center justify-center p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-colors">
+                    <i data-lucide="log-out" class="w-5 h-5 mr-2"></i>
+                    <span>Logout</span>
+                </button>
+             </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6 lg:p-10 overflow-y-auto">
+            <!-- HR Dashboard Page -->
+            <div id="hr-dashboard-page" class="page-content active space-y-6">
+                <h2 class="text-3xl font-bold text-gray-800">HR Dashboard</h2>
+                <div id="hr-dashboard-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md"><h3 class="text-lg font-semibold mb-4">Headcount by Department</h3><div class="relative h-80"><canvas id="headcountChart"></canvas></div></div>
+                    <div class="bg-white p-6 rounded-lg shadow-md"><h3 class="text-lg font-semibold mb-4">Upcoming Anniversaries</h3><div id="anniversaries-list" class="space-y-3"></div></div>
+                </div>
+            </div>
+            
+            <!-- Employees List Page -->
+            <div id="employees-page" class="page-content space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-3xl font-bold text-gray-800">Employees</h2>
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 flex items-center"><i data-lucide="plus-circle" class="w-5 h-5 mr-2"></i> New Employee</button>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-md"><div id="employees-table-container" class="overflow-x-auto"></div></div>
+            </div>
+
+            <!-- Employee Detail Page -->
+            <div id="employee-detail-page" class="page-content space-y-6"></div>
+
+            <!-- Payroll Page -->
+            <div id="payroll-page" class="page-content space-y-6">
+                 <div class="flex justify-between items-center">
+                    <h2 class="text-3xl font-bold text-gray-800">Payroll Runs</h2>
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 flex items-center"><i data-lucide="play-circle" class="w-5 h-5 mr-2"></i> Run New Payroll</button>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-md"><div id="payroll-table-container" class="overflow-x-auto"></div></div>
+            </div>
+
+            <!-- Leave (Self-Service) Page -->
+            <div id="leave-page" class="page-content space-y-6"></div>
+
+            <!-- Legal Dashboard Page -->
+            <div id="legal-dashboard-page" class="page-content space-y-6">
+                <h2 class="text-3xl font-bold text-gray-800">Legal Dashboard</h2>
+                <div id="legal-dashboard-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+                <div class="bg-white p-6 rounded-lg shadow-md"><h3 class="text-lg font-semibold mb-4">Contracts Expiring Soon</h3><div id="expiring-contracts-list" class="space-y-3"></div></div>
+            </div>
+
+            <!-- Contracts Page -->
+            <div id="contracts-page" class="page-content space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-3xl font-bold text-gray-800">Contracts</h2>
+                    <button id="generate-contract-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 flex items-center"><i data-lucide="plus-circle" class="w-5 h-5 mr-2"></i> Generate New Contract</button>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-md"><div id="contracts-table-container" class="overflow-x-auto"></div></div>
+            </div>
+
+            <!-- Contract Generator Page -->
+            <div id="contract-generator-page" class="page-content space-y-6"></div>
+
+        </main>
+    </div>
+
+    <!-- Overlay for mobile sidebar -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden lg:hidden"></div>
+    
+    <!-- Generic Alert Modal -->
+    <div id="alert-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center hidden">
+        <div class="bg-white rounded-lg shadow-2xl p-8 w-full max-w-sm m-4 text-center">
+            <div id="alert-modal-icon" class="mx-auto mb-4"></div>
+            <h3 id="alert-modal-title" class="text-xl font-bold text-gray-800 mb-2"></h3>
+            <p id="alert-modal-message" class="text-gray-600 mb-6"></p>
+            <button id="alert-modal-close-btn" class="bg-blue-600 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700">OK</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- MOCK DATA FOR PHASE 4 ---
+            const mockEmployees = [
+                { id: 'E001', name: 'Alice', department: 'Design', role: 'Lead Architect', joinDate: '2022-01-15' },
+                { id: 'E002', name: 'Bob', department: 'Construction', role: 'Site Manager', joinDate: '2021-11-20' },
+                { id: 'E003', name: 'Charlie', department: 'Sales', role: 'Sales Director', joinDate: '2023-03-10' },
+            ];
+            const mockPayroll = [
+                { id: 'PR-07-2025', period: 'July 2025', status: 'Paid', total: 150000 },
+                { id: 'PR-06-2025', period: 'June 2025', status: 'Paid', total: 148000 },
+            ];
+            const mockLeave = { balance: { annual: 10, sick: 5 }, requests: [{ type: 'Annual', from: '2025-08-10', to: '2025-08-12', status: 'Approved' }] };
+            const mockContracts = [
+                { id: 'C001', name: 'Downtown Tower Project Agreement', type: 'Client Project', status: 'Signed' },
+                { id: 'C002', name: 'Alice - Employment Contract', type: 'Employment', status: 'Signed' },
+                { id: 'C003', name: 'Suburban Mall Expansion NDA', type: 'NDA', status: 'Pending Signature' },
+            ];
+            const mockContractTemplates = [ 'Client Project Agreement', 'Standard Employment Contract', 'Non-Disclosure Agreement (NDA)' ];
+
+            // --- INITIALIZE ICONS ---
+            lucide.createIcons();
+
+            // --- SIDEBAR TOGGLE LOGIC ---
+            const sidebar = document.getElementById('sidebar');
+            const menuToggleBtn = document.getElementById('menu-toggle-btn');
+            const sidebarCloseBtn = document.getElementById('sidebar-close-btn');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            menuToggleBtn.addEventListener('click', () => { sidebar.classList.remove('-translate-x-full'); sidebarOverlay.classList.remove('hidden'); });
+            function closeSidebar() { sidebar.classList.add('-translate-x-full'); sidebarOverlay.classList.add('hidden'); }
+            sidebarCloseBtn.addEventListener('click', closeSidebar);
+            sidebarOverlay.addEventListener('click', closeSidebar);
+
+            // --- PAGE NAVIGATION ---
+            const navLinks = document.querySelectorAll('.nav-item');
+            const pages = document.querySelectorAll('.page-content');
+            function switchPage(pageId, context = null) {
+                pages.forEach(page => page.classList.remove('active'));
+                navLinks.forEach(link => link.classList.remove('active'));
+                const pageToShow = document.getElementById(`${pageId}-page`);
+                if (pageToShow) pageToShow.classList.add('active');
+                const linkToActivate = document.querySelector(`.nav-item[data-page="${pageId}"]`);
+                if (linkToActivate) linkToActivate.classList.add('active');
+                else { // Handle detail pages
+                    if(pageId.includes('employee-detail')) document.querySelector('.nav-item[data-page="employees"]').classList.add('active');
+                    if(pageId.includes('contract-generator')) document.querySelector('.nav-item[data-page="contracts"]').classList.add('active');
+                }
+                
+                if (pageId === 'employee-detail') renderEmployeeDetailPage(context.id);
+                if (pageId === 'contract-generator') renderContractGeneratorPage();
+
+                if (window.innerWidth < 1024) closeSidebar();
+                lucide.createIcons();
+            }
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => { e.preventDefault(); switchPage(e.currentTarget.dataset.page); });
+            });
+            document.getElementById('generate-contract-btn').addEventListener('click', () => switchPage('contract-generator'));
+            
+            // Alert Modal Logic
+            const alertModal = document.getElementById('alert-modal');
+            document.getElementById('alert-modal-close-btn').addEventListener('click', () => alertModal.classList.add('hidden'));
+            function showAlert(title, message, icon = 'info', iconColor = 'text-blue-500') {
+                document.getElementById('alert-modal-title').textContent = title;
+                document.getElementById('alert-modal-message').textContent = message;
+                document.getElementById('alert-modal-icon').innerHTML = `<i data-lucide="${icon}" class="w-12 h-12 ${iconColor}"></i>`;
+                alertModal.classList.remove('hidden');
+                lucide.createIcons();
+            }
+
+            // --- RENDER FUNCTIONS ---
+            function renderTable(containerId, headers, data) {
+                document.getElementById(containerId).innerHTML = `
+                    <table class="w-full text-sm text-left text-gray-500">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50"><tr>${headers.map(h => `<th class="px-6 py-3">${h}</th>`).join('')}</tr></thead>
+                        <tbody>${data}</tbody>
+                    </table>`;
+            }
+
+            function renderHRDashboard() {
+                document.getElementById('hr-dashboard-cards').innerHTML = `
+                    <div class="bg-white p-6 rounded-lg shadow-md"><p class="text-sm">Total Employees</p><p class="text-3xl font-bold">${mockEmployees.length}</p></div>
+                    <div class="bg-white p-6 rounded-lg shadow-md"><p class="text-sm">On Leave Today</p><p class="text-3xl font-bold">2</p></div>
+                    <div class="bg-white p-6 rounded-lg shadow-md"><p class="text-sm">Pending Leave Requests</p><p class="text-3xl font-bold">4</p></div>
+                    <div class="bg-white p-6 rounded-lg shadow-md"><p class="text-sm">Open Positions</p><p class="text-3xl font-bold">3</p></div>
+                `;
+                const ctx = document.getElementById('headcountChart').getContext('2d');
+                if(window.headcountChart instanceof Chart) {
+                    window.headcountChart.destroy();
+                }
+                window.headcountChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Design', 'Construction', 'Sales', 'HR', 'Finance'],
+                        datasets: [{ data: [5, 12, 4, 2, 3], backgroundColor: ['#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EF4444'] }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+                });
+                document.getElementById('anniversaries-list').innerHTML = mockEmployees.map(e => `
+                    <div class="flex justify-between items-center p-2 bg-gray-50 rounded-md">
+                        <div><p class="font-medium">${e.name}</p><p class="text-sm text-gray-500">${e.joinDate}</p></div>
+                        <span class="text-sm text-blue-600">Work Anniversary</span>
+                    </div>`).join('');
+            }
+
+            function renderEmployees() {
+                const tableBody = mockEmployees.map(e => `
+                    <tr class="border-b">
+                        <td class="px-6 py-4 font-medium">${e.name}</td><td class="px-6 py-4">${e.id}</td>
+                        <td class="px-6 py-4">${e.department}</td><td class="px-6 py-4">${e.role}</td>
+                        <td class="px-6 py-4"><button class="view-employee-btn text-blue-600 hover:underline" data-id="${e.id}">View</button></td>
+                    </tr>`).join('');
+                renderTable('employees-table-container', ['Name', 'Employee ID', 'Department', 'Role', 'Action'], tableBody);
+                document.querySelectorAll('.view-employee-btn').forEach(btn => {
+                    btn.addEventListener('click', e => switchPage('employee-detail', { id: e.target.dataset.id }));
+                });
+            }
+
+            function renderEmployeeDetailPage(employeeId) {
+                const emp = mockEmployees.find(e => e.id === employeeId);
+                document.getElementById('employee-detail-page').innerHTML = `
+                    <h2 class="text-3xl font-bold text-gray-800">${emp.name} (${emp.id})</h2>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-1 bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-xl font-semibold mb-4">Employee Details</h3>
+                            <p><strong>Department:</strong> ${emp.department}</p>
+                            <p><strong>Role:</strong> ${emp.role}</p>
+                            <p><strong>Joined:</strong> ${emp.joinDate}</p>
+                        </div>
+                        <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-xl font-semibold mb-4">Recent Payslips</h3>
+                            <p>Payslip history will be shown here.</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            function renderPayroll() {
+                renderTable('payroll-table-container', ['Period', 'Status', 'Total Amount', 'Action'], mockPayroll.map(p => `
+                    <tr class="border-b"><td class="px-6 py-4 font-medium">${p.period}</td><td class="px-6 py-4">${p.status}</td>
+                    <td class="px-6 py-4">$${p.total.toLocaleString()}</td>
+                    <td class="px-6 py-4"><button class="text-blue-600 hover:underline">View</button></td></tr>`).join(''));
+            }
+
+            function renderLeavePage() {
+                document.getElementById('leave-page').innerHTML = `
+                    <h2 class="text-3xl font-bold text-gray-800">Leave Management</h2>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-1 bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-xl font-semibold mb-4">Request Leave</h3>
+                            <form class="space-y-4">
+                                <div><label class="block text-sm">Leave Type</label><select class="w-full p-2 border rounded-md"><option>Annual</option><option>Sick</option></select></div>
+                                <div><label class="block text-sm">Start Date</label><input type="date" class="w-full p-2 border rounded-md"></div>
+                                <div><label class="block text-sm">End Date</label><input type="date" class="w-full p-2 border rounded-md"></div>
+                                <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg">Submit Request</button>
+                            </form>
+                        </div>
+                        <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-xl font-semibold mb-4">Leave History & Balances</h3>
+                            <p><strong>Annual Leave Balance:</strong> ${mockLeave.balance.annual} days</p>
+                            <p><strong>Sick Leave Balance:</strong> ${mockLeave.balance.sick} days</p>
+                            <div class="mt-4 overflow-x-auto">
+                                <table class="w-full text-sm">
+                                    <thead><tr class="border-b"><th class="text-left py-2">Type</th><th class="text-left py-2">Dates</th><th class="text-left py-2">Status</th></tr></thead>
+                                    <tbody>${mockLeave.requests.map(r => `<tr><td>${r.type}</td><td>${r.from} to ${r.to}</td><td>${r.status}</td></tr>`).join('')}</tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>`;
+            }
+            
+            function renderLegalDashboard() {
+                document.getElementById('legal-dashboard-cards').innerHTML = `
+                    <div class="bg-white p-6 rounded-lg shadow-md"><p class="text-sm">Active Contracts</p><p class="text-3xl font-bold">${mockContracts.length}</p></div>
+                    <div class="bg-white p-6 rounded-lg shadow-md"><p class="text-sm">Pending Signatures</p><p class="text-3xl font-bold">${mockContracts.filter(c=>c.status === 'Pending Signature').length}</p></div>
+                    <div class="bg-white p-6 rounded-lg shadow-md"><p class="text-sm">Templates Available</p><p class="text-3xl font-bold">${mockContractTemplates.length}</p></div>
+                    <div class="bg-white p-6 rounded-lg shadow-md"><p class="text-sm">Expiring Soon</p><p class="text-3xl font-bold">1</p></div>
+                `;
+                document.getElementById('expiring-contracts-list').innerHTML = `<div class="p-2 bg-gray-50 rounded-md"><p class="font-medium">Client Agreement for P001</p><p class="text-sm text-gray-500">Expires: 2025-12-31</p></div>`;
+            }
+
+            function renderContracts() {
+                renderTable('contracts-table-container', ['Contract Name', 'Type', 'Status', 'Action'], mockContracts.map(c => `
+                    <tr class="border-b"><td class="px-6 py-4 font-medium">${c.name}</td><td class="px-6 py-4">${c.type}</td>
+                    <td class="px-6 py-4"><span class="px-2 py-1 text-xs font-semibold rounded-full ${c.status === 'Signed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">${c.status}</span></td>
+                    <td class="px-6 py-4"><button class="text-blue-600 hover:underline">View</button></td></tr>`).join(''));
+            }
+
+            function renderContractGeneratorPage() {
+                document.getElementById('contract-generator-page').innerHTML = `
+                    <h2 class="text-3xl font-bold text-gray-800">Contract Generator</h2>
+                    <div class="bg-white p-8 rounded-lg shadow-md max-w-4xl mx-auto">
+                        <form id="contract-form" class="space-y-6">
+                            <div><label class="block text-sm font-medium">Select Template</label><select id="contract-template" class="mt-1 w-full p-2 border rounded-md">${mockContractTemplates.map(t=>`<option>${t}</option>`).join('')}</select></div>
+                            <div><label class="block text-sm font-medium">Select Client/Employee</label><select id="contract-party" class="mt-1 w-full p-2 border rounded-md"><option>Downtown Tower Project (Client)</option><option>Alice (Employee)</option></select></div>
+                            <div class="flex justify-end pt-4">
+                                <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-700 flex items-center"><i data-lucide="send" class="w-5 h-5 mr-2"></i> Send for Signature (Zoho Sign)</button>
+                            </div>
+                        </form>
+                    </div>`;
+                document.getElementById('contract-form').addEventListener('submit', e => {
+                    e.preventDefault();
+                    showAlert('Integration Success', 'Contract has been sent for digital signature via Zoho Sign.', 'check-circle', 'text-green-500');
+                });
+                lucide.createIcons();
+            }
+
+            // --- INITIAL LOAD ---
+            function initialRender() {
+                renderHRDashboard();
+                renderEmployees();
+                renderPayroll();
+                renderLeavePage();
+                renderLegalDashboard();
+                renderContracts();
+                switchPage('hr-dashboard');
+            }
+            initialRender();
+        });
+    </script>
+</body>
+</html>
