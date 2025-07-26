@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLATONIC ERP - Phase 2</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Chart.js for charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom Styles -->
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .sidebar-nav::-webkit-scrollbar { width: 4px; }
+        .sidebar-nav::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
+        .nav-item.active {
+            background-color: #2563eb;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .nav-item.active .nav-icon { color: white; }
+        .page-content { display: none; }
+        .page-content.active { display: block; }
+
+        .tab-button.active {
+            border-color: #2563eb;
+            color: #2563eb;
+            background-color: #eff6ff;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    
+    <!-- Mobile Menu Toggle Button -->
+    <button id="menu-toggle-btn" class="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-md shadow-md text-gray-600 hover:bg-gray-100">
+        <i data-lucide="menu" class="w-6 h-6"></i>
+    </button>
+
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="w-64 bg-white shadow-lg flex flex-col shrink-0 fixed lg:static h-full z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
+            <div class="flex items-center justify-between h-20 border-b px-4">
+                <h1 class="text-2xl font-bold text-blue-600">PLATONIC</h1>
+                <button id="sidebar-close-btn" class="lg:hidden text-gray-600 hover:text-gray-800">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <nav class="flex-1 px-4 py-4 sidebar-nav overflow-y-auto">
+                <!-- Project Operations Section -->
+                <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Project Operations</p>
+                <ul>
+                    <li>
+                        <a href="#" data-page="projects-dashboard" class="nav-item flex items-center p-3 my-1 rounded-lg cursor-pointer transition-colors text-gray-600 hover:bg-gray-200 hover:text-gray-800 active">
+                            <i data-lucide="layout-dashboard" class="nav-icon w-5 h-5"></i>
+                            <span class="ml-4 font-medium">Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-page="projects-list" class="nav-item flex items-center p-3 my-1 rounded-lg cursor-pointer transition-colors text-gray-600 hover:bg-gray-200 hover:text-gray-800">
+                            <i data-lucide="list-checks" class="nav-icon w-5 h-5"></i>
+                            <span class="ml-4 font-medium">All Projects</span>
+                        </a>
+                    </li>
+                </ul>
+                <!-- Sales & CRM Section (from Phase 1) -->
+                <p class="px-3 mt-6 text-xs font-semibold text-gray-400 uppercase tracking-wider">Sales & CRM (Phase 1)</p>
+                 <ul>
+                    <li class="flex items-center p-3 my-1 rounded-lg text-gray-400 cursor-not-allowed">
+                        <i data-lucide="briefcase" class="w-5 h-5"></i>
+                        <span class="ml-4 font-medium">Sales Dashboard</span>
+                    </li>
+                 </ul>
+            </nav>
+             <div class="p-4 border-t">
+                <div class="flex items-center">
+                    <img class="h-10 w-10 rounded-full object-cover" src="https://placehold.co/100x100/E2E8F0/4A5568?text=PM" alt="Project Manager" />
+                    <div class="ml-3">
+                        <p class="text-sm font-semibold text-gray-800">Project Manager</p>
+                        <p class="text-xs text-gray-500">pm@platonic.com</p>
+                    </div>
+                </div>
+                <form action="{% url 'logout' %}" method="post" class="w-full">
+                {% csrf_token %}
+                    <button type="submit" class="w-full mt-4 flex items-center justify-center p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-colors">
+                        <i data-lucide="log-out" class="w-5 h-5 mr-2"></i>
+                        <span>Logout</span>
+                    </button>
+                </form>
+             </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6 lg:p-10 overflow-y-auto">
+            <!-- Projects Dashboard Page -->
+            <div id="projects-dashboard-page" class="page-content active space-y-6">
+                <h2 class="text-3xl font-bold text-gray-800">Projects Dashboard</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div id="projects-dashboard-cards" class="contents"></div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md border border-gray-100">
+                        <h3 class="text-lg font-semibold text-gray-700 mb-4">Project Status Overview</h3>
+                        <div class="relative h-80"><canvas id="projectStatusChart"></canvas></div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md border border-gray-100">
+                        <h3 class="text-lg font-semibold text-gray-700 mb-4">High-Priority Tasks</h3>
+                        <div id="high-priority-tasks" class="space-y-4"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Projects List Page -->
+            <div id="projects-list-page" class="page-content space-y-6">
+                <h2 class="text-3xl font-bold text-gray-800">All Projects</h2>
+                <div class="bg-white p-4 rounded-lg shadow-md border border-gray-100">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-gray-500">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3">Project Name</th>
+                                    <th class="px-6 py-3">Project Manager</th>
+                                    <th class="px-6 py-3">Status</th>
+                                    <th class="px-6 py-3">Completion</th>
+                                    <th class="px-6 py-3">Budget</th>
+                                    <th class="px-6 py-3">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="projects-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project Detail Page -->
+            <div id="project-detail-page" class="page-content space-y-6">
+                <!-- Header populated by JS -->
+                <div id="project-detail-header"></div>
+                
+                <!-- Tabs -->
+                <div class="border-b border-gray-200">
+                    <nav id="project-tabs" class="-mb-px flex space-x-6" aria-label="Tabs">
+                        <!-- Tab buttons populated by JS -->
+                    </nav>
+                </div>
+
+                <!-- Tab Content -->
+                <div id="project-tab-content">
+                    <!-- Overview Tab -->
+                    <div id="tab-overview" class="tab-content active space-y-6"></div>
+                    <!-- Documents Tab -->
+                    <div id="tab-documents" class="tab-content space-y-6"></div>
+                    <!-- Financials Tab -->
+                    <div id="tab-financials" class="tab-content space-y-6"></div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Overlay for mobile sidebar -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden lg:hidden"></div>
+
+    <!-- Universal Financial Transaction Modal (V2) -->
+    <div id="financial-modal-v2" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center hidden">
+        <div class="bg-white rounded-lg shadow-2xl p-8 w-full max-w-2xl m-4">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">Log Project Expense</h3>
+                <button id="close-financial-modal-v2-btn" class="text-gray-400 hover:text-gray-600"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            <form id="expense-form" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="expense-project-id" class="block text-sm font-medium text-gray-700">Tag to Project</label>
+                        <select id="expense-project-id" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2 bg-gray-100"></select>
+                    </div>
+                    <div>
+                        <label for="expense-type" class="block text-sm font-medium text-gray-700">Expense Category (CoA)</label>
+                        <select id="expense-type" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2">
+                            <option value="">Select Category...</option>
+                            <option value="COGS">COGS (Cost of Goods Sold)</option>
+                            <option value="OPEX">OPEX (Operating Expense)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Dynamic Fields Section -->
+                <div id="dynamic-expense-fields" class="space-y-4 pt-2 border-t mt-4">
+                    <!-- Fields will be injected here by JS based on selection -->
+                </div>
+
+                <div class="mt-8 flex justify-end space-x-3">
+                    <button type="button" id="cancel-financial-modal-v2-btn" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700">Log Expense</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- MOCK DATA FOR PHASE 2 ---
+            const mockProjects = [
+                { id: 'P001', name: 'Downtown Tower Project', pm: 'Alice', status: 'In Progress', completion: 75, budget: 500000, spent: 350000 },
+                { id: 'P002', name: 'Suburban Mall Expansion', pm: 'Bob', status: 'On Hold', completion: 40, budget: 1200000, spent: 480000 },
+                { id: 'P003', name: 'City Bridge Reinforcement', pm: 'Charlie', status: 'Completed', completion: 100, budget: 2500000, spent: 2450000 },
+                { id: 'P004', name: 'Green Valley Residences', pm: 'Alice', status: 'Planning', completion: 10, budget: 800000, spent: 50000 },
+            ];
+            const mockDocuments = {
+                'P001': [ {id: 'RFI-01', type: 'RFI', date: '2025-07-20', status: 'Answered'}, {id: 'VO-01', type: 'Variation Order', date: '2025-07-15', status: 'Approved'} ],
+                'P002': [ {id: 'IR-01', type: 'Inspection Request', date: '2025-07-18', status: 'Pending'} ],
+            };
+            const mockFinancials = {
+                'P001': [
+                    {id: 'T01', type: 'Revenue', date: '2025-07-01', amount: 150000, description: 'Initial Down Payment'},
+                    {id: 'T02', type: 'COGS', date: '2025-07-05', amount: -75000, description: 'Steel Beams Purchase'},
+                    {id: 'T03', type: 'OPEX', date: '2025-07-10', amount: -5000, description: 'Site Office Rental'},
+                ],
+            };
+
+            // --- INITIALIZE ICONS ---
+            lucide.createIcons();
+
+            // --- SIDEBAR TOGGLE LOGIC ---
+            const sidebar = document.getElementById('sidebar');
+            const menuToggleBtn = document.getElementById('menu-toggle-btn');
+            const sidebarCloseBtn = document.getElementById('sidebar-close-btn');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+            menuToggleBtn.addEventListener('click', () => {
+                sidebar.classList.remove('-translate-x-full');
+                sidebarOverlay.classList.remove('hidden');
+            });
+            function closeSidebar() {
+                sidebar.classList.add('-translate-x-full');
+                sidebarOverlay.classList.add('hidden');
+            }
+            sidebarCloseBtn.addEventListener('click', closeSidebar);
+            sidebarOverlay.addEventListener('click', closeSidebar);
+
+            // --- PAGE NAVIGATION ---
+            const navLinks = document.querySelectorAll('.nav-item');
+            const pages = document.querySelectorAll('.page-content');
+
+            function switchPage(pageId, contextId = null) {
+                pages.forEach(page => page.classList.remove('active'));
+                navLinks.forEach(link => link.classList.remove('active'));
+
+                const pageToShow = document.getElementById(`${pageId}-page`);
+                if (pageToShow) {
+                    pageToShow.classList.add('active');
+                }
+                
+                const linkToActivate = document.querySelector(`.nav-item[data-page="${pageId}"]`);
+                if (linkToActivate) {
+                    linkToActivate.classList.add('active');
+                } else { // Handle cases like project-detail where there's no direct nav link
+                     const projectsLink = document.querySelector('.nav-item[data-page="projects-list"]');
+                     if (projectsLink) projectsLink.classList.add('active');
+                }
+
+                if (pageId === 'project-detail' && contextId) {
+                    renderProjectDetailPage(contextId);
+                }
+                
+                if (window.innerWidth < 1024) {
+                    closeSidebar();
+                }
+                lucide.createIcons();
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    switchPage(e.currentTarget.dataset.page);
+                });
+            });
+
+            // --- MODAL HANDLING ---
+            const financialModalV2 = document.getElementById('financial-modal-v2');
+            document.getElementById('close-financial-modal-v2-btn').addEventListener('click', () => financialModalV2.classList.add('hidden'));
+            document.getElementById('cancel-financial-modal-v2-btn').addEventListener('click', () => financialModalV2.classList.add('hidden'));
+
+            // --- DYNAMIC FORM (V2) LOGIC ---
+            const expenseTypeSelect = document.getElementById('expense-type');
+            const dynamicFieldsContainer = document.getElementById('dynamic-expense-fields');
+            
+            expenseTypeSelect.addEventListener('change', (e) => {
+                const type = e.target.value;
+                dynamicFieldsContainer.innerHTML = '';
+                let fieldsHtml = `
+                    <div>
+                        <label for="expense-vendor" class="block text-sm font-medium text-gray-700">Vendor Name</label>
+                        <input type="text" id="expense-vendor" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2" placeholder="e.g., Steel Beams Ltd.">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="expense-amount" class="block text-sm font-medium text-gray-700">Amount</label>
+                            <div class="relative mt-1"><div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"><span class="text-gray-500 sm:text-sm">$</span></div><input type="number" required id="expense-amount" class="block w-full rounded-md border-gray-300 pl-7 p-2" placeholder="0.00"></div>
+                        </div>
+                        <div>
+                            <label for="expense-payment-method" class="block text-sm font-medium text-gray-700">Payment Method</label>
+                            <select id="expense-payment-method" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2"><option>Bank Transfer</option><option>Credit Card</option><option>Cash</option></select>
+                        </div>
+                    </div>
+                `;
+
+                if (type === 'COGS') {
+                    fieldsHtml += `
+                    <div>
+                        <label for="expense-material" class="block text-sm font-medium text-gray-700">Material / Service Description</label>
+                        <input type="text" id="expense-material" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2" placeholder="e.g., I-Beams, Concrete Mix">
+                    </div>`;
+                } else if (type === 'OPEX') {
+                    fieldsHtml += `
+                    <div>
+                        <label for="expense-department" class="block text-sm font-medium text-gray-700">Department</label>
+                        <input type="text" id="expense-department" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2" placeholder="e.g., Design, Site Operations">
+                    </div>`;
+                }
+
+                dynamicFieldsContainer.innerHTML = fieldsHtml;
+            });
+
+            // --- RENDER FUNCTIONS ---
+            function renderProjectsDashboard() {
+                // Cards
+                const cardContainer = document.getElementById('projects-dashboard-cards');
+                cardContainer.innerHTML = `
+                    <div class="bg-white p-6 rounded-lg shadow-md border"><p class="text-sm text-gray-500">Active Projects</p><p class="text-3xl font-bold text-gray-800">${mockProjects.filter(p=>p.status === 'In Progress').length}</p></div>
+                    <div class="bg-white p-6 rounded-lg shadow-md border"><p class="text-sm text-gray-500">Overdue Tasks</p><p class="text-3xl font-bold text-gray-800">8</p></div>
+                    <div class="bg-white p-6 rounded-lg shadow-md border"><p class="text-sm text-gray-500">Pending Approvals</p><p class="text-3xl font-bold text-gray-800">3</p></div>
+                    <div class="bg-white p-6 rounded-lg shadow-md border"><p class="text-sm text-gray-500">Budget vs Actual</p><p class="text-3xl font-bold text-green-600">On Track</p></div>
+                `;
+                // Chart
+                const ctx = document.getElementById('projectStatusChart').getContext('2d');
+                if(window.projectStatusChart instanceof Chart) {
+                    window.projectStatusChart.destroy();
+                }
+                window.projectStatusChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['In Progress', 'On Hold', 'Completed', 'Planning'],
+                        datasets: [{
+                            data: [
+                                mockProjects.filter(p=>p.status === 'In Progress').length,
+                                mockProjects.filter(p=>p.status === 'On Hold').length,
+                                mockProjects.filter(p=>p.status === 'Completed').length,
+                                mockProjects.filter(p=>p.status === 'Planning').length,
+                            ],
+                            backgroundColor: ['#3B82F6', '#F59E0B', '#10B981', '#A78BFA'],
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+                });
+                // High-priority tasks
+                document.getElementById('high-priority-tasks').innerHTML = `
+                    <div class="p-3 bg-red-50 rounded-lg"><p class="font-medium text-red-800">Submit Structural Plans for P001</p><p class="text-sm text-red-600">Due: 2025-07-22</p></div>
+                    <div class="p-3 bg-yellow-50 rounded-lg"><p class="font-medium text-yellow-800">Client Approval for P004 Mockups</p><p class="text-sm text-yellow-600">Due: 2025-07-25</p></div>
+                `;
+            }
+
+            function renderProjectsList() {
+                const tableBody = document.getElementById('projects-table-body');
+                tableBody.innerHTML = mockProjects.map(p => `
+                    <tr class="bg-white border-b hover:bg-gray-50">
+                        <td class="px-6 py-4 font-medium">${p.name}</td>
+                        <td class="px-6 py-4">${p.pm}</td>
+                        <td class="px-6 py-4"><span class="px-2 py-1 text-xs font-semibold rounded-full ${p.status === 'Completed' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}">${p.status}</span></td>
+                        <td class="px-6 py-4"><div class="w-full bg-gray-200 rounded-full h-2.5"><div class="bg-blue-600 h-2.5 rounded-full" style="width: ${p.completion}%"></div></div></td>
+                        <td class="px-6 py-4">$${p.budget.toLocaleString()}</td>
+                        <td class="px-6 py-4"><button class="view-project-btn text-blue-600 hover:underline" data-id="${p.id}">View</button></td>
+                    </tr>
+                `).join('');
+                document.querySelectorAll('.view-project-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => switchPage('project-detail', e.target.dataset.id));
+                });
+            }
+
+            function renderProjectDetailPage(projectId) {
+                const project = mockProjects.find(p => p.id === projectId);
+                if (!project) return;
+                
+                // Render Header
+                document.getElementById('project-detail-header').innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h2 class="text-3xl font-bold text-gray-800">${project.name} <span class="text-xl font-normal text-gray-500">(${project.id})</span></h2>
+                            <p class="text-gray-600">Managed by: ${project.pm} | Status: ${project.status}</p>
+                        </div>
+                        <button id="log-expense-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 flex items-center" data-project-id="${project.id}">
+                            <i data-lucide="plus-circle" class="w-5 h-5 mr-2"></i> Log Expense
+                        </button>
+                    </div>`;
+                document.getElementById('log-expense-btn').addEventListener('click', (e) => {
+                    const projectId = e.currentTarget.dataset.projectId;
+                    const projectSelect = document.getElementById('expense-project-id');
+                    projectSelect.innerHTML = `<option value="${projectId}" selected>${project.name}</option>`;
+                    financialModalV2.classList.remove('hidden');
+                });
+
+                // Render Tabs
+                const tabs = [ {id: 'overview', label: 'Overview'}, {id: 'documents', label: 'Documents'}, {id: 'financials', label: 'Financials'} ];
+                document.getElementById('project-tabs').innerHTML = tabs.map(tab => `
+                    <button class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-gray-500 hover:text-blue-600 hover:border-blue-300 ${tab.id === 'overview' ? 'active' : ''}" data-tab="${tab.id}">${tab.label}</button>
+                `).join('');
+                
+                // Render Tab Content
+                renderProjectOverview(project);
+                renderProjectDocuments(project);
+                renderProjectFinancials(project);
+
+                // Tab switching logic
+                document.querySelectorAll('.tab-button').forEach(button => {
+                    button.addEventListener('click', e => {
+                        const tabId = e.target.dataset.tab;
+                        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                        e.target.classList.add('active');
+                        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                        document.getElementById(`tab-${tabId}`).classList.add('active');
+                    });
+                });
+                lucide.createIcons();
+            }
+
+            function renderProjectOverview(project) {
+                document.getElementById('tab-overview').innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white p-4 rounded-lg shadow"><p class="text-sm text-gray-500">Total Budget</p><p class="text-2xl font-bold">$${project.budget.toLocaleString()}</p></div>
+                        <div class="bg-white p-4 rounded-lg shadow"><p class="text-sm text-gray-500">Total Spent</p><p class="text-2xl font-bold">$${project.spent.toLocaleString()}</p></div>
+                        <div class="bg-white p-4 rounded-lg shadow"><p class="text-sm text-gray-500">Remaining</p><p class="text-2xl font-bold text-green-600">$${(project.budget - project.spent).toLocaleString()}</p></div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h4 class="text-lg font-semibold mb-4">Milestones</h4>
+                        <!-- Milestone timeline would go here -->
+                        <p class="text-gray-500">Milestone tracking component will be integrated here.</p>
+                    </div>
+                `;
+            }
+            function renderProjectDocuments(project) {
+                const docs = mockDocuments[project.id] || [];
+                document.getElementById('tab-documents').innerHTML = `
+                    <div class="bg-white p-4 rounded-lg shadow-md border border-gray-100">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead class="text-xs text-gray-700 uppercase bg-gray-50"><tr><th class="px-6 py-3">Doc ID</th><th class="px-6 py-3">Type</th><th class="px-6 py-3">Date</th><th class="px-6 py-3">Status</th></tr></thead>
+                                <tbody>${docs.map(d => `<tr class="border-b">
+                                    <td class="px-6 py-4 font-medium">${d.id}</td>
+                                    <td class="px-6 py-4">${d.type}</td>
+                                    <td class="px-6 py-4">${d.date}</td>
+                                    <td class="px-6 py-4">${d.status}</td>
+                                </tr>`).join('') || `<tr><td colspan="4" class="text-center py-4">No documents found.</td></tr>`}</tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+            function renderProjectFinancials(project) {
+                const txns = mockFinancials[project.id] || [];
+                 document.getElementById('tab-financials').innerHTML = `
+                    <div class="bg-white p-4 rounded-lg shadow-md border border-gray-100">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead class="text-xs text-gray-700 uppercase bg-gray-50"><tr><th class="px-6 py-3">Date</th><th class="px-6 py-3">Description</th><th class="px-6 py-3">Type</th><th class="px-6 py-3 text-right">Amount</th></tr></thead>
+                                <tbody>${txns.map(t => `<tr class="border-b">
+                                    <td class="px-6 py-4">${t.date}</td>
+                                    <td class="px-6 py-4 font-medium">${t.description}</td>
+                                    <td class="px-6 py-4">${t.type}</td>
+                                    <td class="px-6 py-4 text-right font-semibold ${t.amount > 0 ? 'text-green-600' : 'text-red-600'}">$${Math.abs(t.amount).toLocaleString()}</td>
+                                </tr>`).join('') || `<tr><td colspan="4" class="text-center py-4">No transactions found.</td></tr>`}</tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // --- INITIAL LOAD ---
+            renderProjectsDashboard();
+            renderProjectsList();
+            switchPage('projects-dashboard'); // Start on the new dashboard
+        });
+    </script>
+</body>
+</html>

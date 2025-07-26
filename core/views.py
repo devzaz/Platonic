@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponseRedirect
 from django.db.models import Q
 from django.contrib.auth import authenticate, login, logout
 from django.conf import settings
@@ -25,9 +25,12 @@ def login_page(request):
         user_object = authenticate(username=username, password=password)
         if user_object:
             login(request, user_object)
-            print("User logged in successfully.")
-            messages.success(request, "Login successful.")
-            return redirect('sales/sales_dashboard/')
+            next_url = request.GET.get('next')
+            if next_url:
+                return HttpResponseRedirect(next_url)
+            else:
+                return redirect('SalesDashboard')
+            
     
     return render(request, 'core/login.html')
 

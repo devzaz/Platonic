@@ -59,6 +59,15 @@ class FinancialTransaction(models.Model):
         related_name='transactions',
         help_text="The project this transaction is associated with."
     )
+
+    account = models.ForeignKey(
+        ChartOfAccounts,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        help_text="The account from the CoA to debit/credit"
+    )
+    
     # The 'Client Name' is derived from project.client.name
 
     vendor = models.ForeignKey(
@@ -96,6 +105,11 @@ class FinancialTransaction(models.Model):
         help_text="Toggled to True when payment is confirmed"
     )
 
+    is_debit = models.BooleanField(
+        default=True,
+        help_text="Is this a debit? (If False, it's a credit)"
+    )
+
     # This directly implements your 'Received?' toggle.
     
     transaction_date = models.DateField()
@@ -108,6 +122,21 @@ class FinancialTransaction(models.Model):
         null=True
     )
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+    # New fields for Asset/CAPEX tracking
+    asset_description = models.CharField(
+        max_length=255, 
+        null=True, 
+        blank=True,
+        help_text="Description of the capital asset purchased"
+    )
+
+    depreciation_period_months = models.PositiveSmallIntegerField(
+        null=True, 
+        blank=True,
+        help_text="The useful life of the asset in months for depreciation"
+    )
 
     def __str__(self):
         return f"Transaction {self.id} for {self.project.name}"

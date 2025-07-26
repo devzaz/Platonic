@@ -27,6 +27,18 @@ class Contact(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    performance_rating = models.PositiveSmallIntegerField(
+        null=True, 
+        blank=True, 
+        help_text="Vendor rating from 1 to 5"
+    )
+
+    notes = models.TextField(
+        blank=True, 
+        null=True, 
+        help_text="Internal notes on vendor performance or reliability"
+    )
     
     def __str__(self):
         return self.name

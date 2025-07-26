@@ -43,7 +43,10 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
     'sales',
     'projects',
-    'operations'
+    'operations',
+    'procurement',
+    'hr',
+    'legal'
 ]
 
 MIDDLEWARE = [
@@ -82,12 +85,12 @@ WSGI_APPLICATION = 'Platonic.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 
 DATABASES = {
@@ -154,5 +157,12 @@ STORAGES = {
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL ='core.User'
+
+
+LOGIN_URL = '/accounts/login/'
+
+LOGIN_REDIRECT_URL = '/sales/sales_dashboard/'
+
+
 
 

@@ -33,3 +33,6 @@ def add_lead_view(request):
     
     return redirect('SalesDashboard')
 
+
+
+
