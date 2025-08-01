@@ -302,16 +302,14 @@
                             <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                                 <tr>
                                     <th scope="col" class="px-6 py-3">Company Name</th>
-                                    <th scope="col" class="px-6 py-3">Type</th>
                                     <th scope="col" class="px-6 py-3">Industry</th>
+                                    <th scope="col" class="px-6 py-3">Type</th>
                                     <th scope="col" class="px-6 py-3">Contact Info</th>
-                                    <th scope="col" class="px-6 py-3">Active Projects</th>
                                     <th scope="col" class="px-6 py-3"><span class="sr-only">Actions</span></th>
                                 </tr>
                             </thead>
                             <tbody id="contacts-table-body">
-                                <!-- Contact rows will be inserted here by JS -->
-                            </tbody>
+                                </tbody>
                         </table>
                     </div>
                 </div>
@@ -321,36 +319,41 @@
             <div id="add-contact-page" class="page-content space-y-6">
                 <h2 class="text-3xl font-bold text-gray-800">Add New Contact</h2>
                 <div class="bg-white p-8 rounded-lg shadow-md border border-gray-100 max-w-4xl mx-auto">
-                    <form class="space-y-6">
+                    <form class="space-y-6" method="post" action="{% url 'add_contact' %}">
+                        {% csrf_token %}
                          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label for="contact-name" class="block text-sm font-medium text-gray-700">Company Name</label>
-                                <input type="text" id="contact-name" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2" placeholder="e.g., Global Construction Inc.">
+                                {{contact_form.name}}
                             </div>
                             <div>
                                 <label for="contact-type" class="block text-sm font-medium text-gray-700">Contact Type</label>
-                                <select id="contact-type" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2">
-                                    <option>Client</option>
-                                    <option>Supplier</option>
-                                    <option>Subcontractor</option>
-                                    <option>Consultant</option>
-                                </select>
+                                {{contact_form.contact_type}}
                             </div>
                              <div>
-                                <label for="contact-industry" class="block text-sm font-medium text-gray-700">Industry</label>
-                                <input type="text" id="contact-industry" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2" placeholder="e.g., Commercial Construction">
+                                <label for="contact-industry" class="block text-sm font-medium text-gray-700">Company Name</label>
+                                {{contact_form.company_name}}
                             </div>
                             <div>
                                 <label for="contact-phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
-                                <input type="tel" id="contact-phone" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2" placeholder="e.g., 555-0101">
+                                {{contact_form.phone}}
                             </div>
                             <div class="md:col-span-2">
                                 <label for="contact-email" class="block text-sm font-medium text-gray-700">Email Address</label>
-                                <input type="email" id="contact-email" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2" placeholder="e.g., contact@globalcon.com">
+                                {{contact_form.email}}
                             </div>
                              <div class="md:col-span-2">
                                 <label for="contact-address" class="block text-sm font-medium text-gray-700">Address</label>
-                                <textarea id="contact-address" rows="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2" placeholder="123 Main Street, Suite 400, Metropolis"></textarea>
+                                {{contact_form.address}}
+                            </div>
+                            <div>
+                                <label for="contact-type" class="block text-sm font-medium text-gray-700">Performance Rating</label>
+                                {{contact_form.performance_rating}}
+                            </div>
+
+                            <div class="md:col-span-2">
+                                <label for="contact-address" class="block text-sm font-medium text-gray-700">Notes</label>
+                                {{contact_form.notes}}
                             </div>
                         </div>
                         <div class="flex justify-end space-x-3 pt-4">
@@ -729,29 +732,95 @@
                 `).join('');
             }
 
-            function renderContactsTable() {
-                const tableBody = document.getElementById('contacts-table-body');
-                tableBody.innerHTML = mockContacts.map(contact => `
-                    <tr class="bg-white border-b hover:bg-gray-50">
-                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap flex items-center">
-                            <i data-lucide="building" class="mr-3 text-gray-400 w-5 h-5"></i>
-                            ${contact.name}
-                        </th>
-                        <td class="px-6 py-4">
-                            <span class="px-2 py-1 font-semibold text-xs rounded-full ${contact.type === 'Client' ? 'bg-green-100 text-green-800' : 'bg-indigo-100 text-indigo-800'}">${contact.type}</span>
-                        </td>
-                        <td class="px-6 py-4">${contact.industry}</td>
-                        <td class="px-6 py-4">
-                            <div class="flex items-center space-x-2 text-xs"><i data-lucide="phone" class="w-3.5 h-3.5"></i> <span>${contact.phone}</span></div>
-                            <div class="flex items-center space-x-2 mt-1 text-xs"><i data-lucide="mail" class="w-3.5 h-3.5"></i> <span>${contact.email}</span></div>
-                        </td>
-                        <td class="px-6 py-4 font-medium">${contact.type === 'Client' ? contact.projects : 'N/A'}</td>
-                        <td class="px-6 py-4 text-right">
-                            <button class="text-gray-500 hover:text-blue-600"><i data-lucide="more-horizontal"></i></button>
-                        </td>
-                    </tr>
-                `).join('');
-            }
+            // async function renderContactsTable() {
+            //     const tableBody = document.getElementById('contacts-table-body');
+            //     tableBody.innerHTML = mockContacts.map(contact => `
+            //         <tr class="bg-white border-b hover:bg-gray-50">
+            //             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap flex items-center">
+            //                 <i data-lucide="building" class="mr-3 text-gray-400 w-5 h-5"></i>
+            //                 ${contact.name}
+            //             </th>
+            //             <td class="px-6 py-4">
+            //                 <span class="px-2 py-1 font-semibold text-xs rounded-full ${contact.type === 'Client' ? 'bg-green-100 text-green-800' : 'bg-indigo-100 text-indigo-800'}">${contact.type}</span>
+            //             </td>
+            //             <td class="px-6 py-4">${contact.industry}</td>
+            //             <td class="px-6 py-4">
+            //                 <div class="flex items-center space-x-2 text-xs"><i data-lucide="phone" class="w-3.5 h-3.5"></i> <span>${contact.phone}</span></div>
+            //                 <div class="flex items-center space-x-2 mt-1 text-xs"><i data-lucide="mail" class="w-3.5 h-3.5"></i> <span>${contact.email}</span></div>
+            //             </td>
+            //             <td class="px-6 py-4 font-medium">${contact.type === 'Client' ? contact.projects : 'N/A'}</td>
+            //             <td class="px-6 py-4 text-right">
+            //                 <button class="text-gray-500 hover:text-blue-600"><i data-lucide="more-horizontal"></i></button>
+            //             </td>
+            //         </tr>
+            //     `).join('');
+            // }
+
+
+
+
+                async function renderContactsTable() {
+                    const tableBody = document.getElementById('contacts-table-body');
+                    tableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4">Loading...</td></tr>';
+
+                    try {
+                        const response = await fetch('/api/contacts/');
+                        const data = await response.json();
+                        const contacts = data.contacts;
+
+                        if (contacts.length === 0) {
+                            tableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4">No contacts found.</td></tr>';
+                            return;
+                        }
+
+                        // Map over the contacts and create the corrected HTML
+                        tableBody.innerHTML = contacts.map(contact => `
+                            <tr class="bg-white border-b hover:bg-gray-50">
+                                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap flex items-center">
+                                    <i data-lucide="building" class="mr-3 text-gray-400 w-5 h-5"></i>
+                                    ${contact.name}
+                                </th>
+
+                                <td class="px-6 py-4">${contact.company_name}</td>
+
+                                <td class="px-6 py-4">
+                                    <span class="px-2 py-1 font-semibold text-xs rounded-full ${contact.contact_type === 'Client' ? 'bg-green-100 text-green-800' : 'bg-indigo-100 text-indigo-800'}">${contact.type}</span>
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center space-x-2 text-xs">
+                                        <i data-lucide="phone" class="w-3.5 h-3.5"></i>
+                                        <span>${contact.phone}</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2 mt-1 text-xs">
+                                        <i data-lucide="mail" class="w-3.5 h-3.5"></i>
+                                        <span>${contact.email}</span>
+                                    </div>
+                                </td>
+
+                                <td class="px-6 py-4 font-medium">${contact.contact_type === 'Client' ? contact.projects : 'N/A'}</td>
+
+                                <td class="px-6 py-4 text-right">
+                                    <button class="text-gray-500 hover:text-blue-600">
+                                        <i data-lucide="more-horizontal"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('');
+
+                        // If using Lucide icons, you need to re-initialize them
+                        if (typeof lucide !== 'undefined') {
+                            lucide.createIcons();
+                        }
+
+                    } catch (error) {
+                        console.error('Error fetching contacts:', error);
+                        tableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4 text-red-500">Failed to load data.</td></tr>';
+                    }
+                }
+
+                // Call the function when the page is loaded
+                document.addEventListener('DOMContentLoaded', renderContactsTable);
 
             // --- QUOTATION PAGE ---
             const quoteItemsBody = document.getElementById('quote-items-body');
@@ -836,6 +905,17 @@
                 const projectOptions = mockLeads.filter(l => l.status === 'Won').map(l => `<option value="${l.id}">${l.name}</option>`).join('');
                 modalProjectSelect.innerHTML = '<option value="">Select Project...</option>' + projectOptions;
             }
+
+
+
+
+
+
+
+
+
+
+
 
             // --- INITIAL LOAD ---
             renderDashboard();
