@@ -1,0 +1,439 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PLATONIC | DESIGN & BUILD</title>
+
+    <link <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="media/assets/css/style.css" />
+    <link rel="shortcut icon" type="image/png" href="media/assets/img/favicon.svg" />
+    <script type="module" src="media/assets/js/script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+  </head>
+
+  <body>
+    <header class="site-header">
+      <nav class="hero__nav">
+        <span class="logo">
+          <a href="/">
+            <img
+              src="media/assets/img/logo.svg"
+              alt="Platonic Logo"
+              width="160"
+              height="auto"
+            />
+          </a>
+        </span>
+        <button class="hero__nav-btn" id="menuToggle">☰</button>
+      </nav>
+
+      <div class="sidebar-nav" id="sidebarNav">
+        <div class="sidebar-nav__overlay" id="sidebarOverlay"></div>
+        <div class="sidebar-nav__panel">
+          <button class="sidebar-nav__close" id="menuClose">×</button>
+          <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Our Services</a></li>
+            <li><a href="#">Projects</a></li>
+            <li><a href="#">Media</a></li>
+            <li><a href="#">Contact Us</a></li>
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <!-- new section -->
+
+    <section class="hero swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide hero-slide">
+          <video
+            class="hero__video"
+            autoplay
+            muted
+            loop
+            playsinline
+            poster="media/assets/img/hero-img.webp"
+          >
+            <source src="media/assets/img/slide-1.mp4" type="video/mp4" />
+          </video>
+          <div class="hero__overlay"></div>
+          <div class="hero__content">
+            <h1 class="hero__headline">Architecture<br />with Soul.</h1>
+            <p class="hero__subhead">
+              Designs that outlast trends. Spaces that move people.
+            </p>
+            <a href="#projects" class="hero__cta">View Our Projects</a>
+          </div>
+        </div>
+
+        <div class="swiper-slide hero-slide">
+          <video
+            class="hero__video"
+            autoplay
+            muted
+            loop
+            playsinline
+            poster="media/assets/img/hero-img.webp"
+          >
+            <source src="media/assets/img/slide-2.mp4" type="video/mp4" />
+          </video>
+          <div class="hero__overlay"></div>
+          <div class="hero__content">
+            <h1 class="hero__headline">
+              Timeless <br />
+              Craftsmanship
+            </h1>
+            <p class="hero__subhead">Spaces shaped by intent and emotion.</p>
+            <a href="#projects" class="hero__cta">View Our Projects</a>
+          </div>
+        </div>
+
+        <div class="swiper-slide hero-slide">
+          <video
+            class="hero__video"
+            autoplay
+            muted
+            loop
+            playsinline
+            poster="media/assets/img/hero-img.webp"
+          >
+            <source src="media/assets/img/slide-3.mp4" type="video/mp4" />
+          </video>
+          <div class="hero__overlay"></div>
+          <div class="hero__content">
+            <h1 class="hero__headline">
+              Timeless <br />
+              Craftsmanship
+            </h1>
+            <p class="hero__subhead">Spaces shaped by intent and emotion.</p>
+            <a href="#projects" class="hero__cta">View Our Projects</a>
+          </div>
+        </div>
+
+        <div class="swiper-slide hero-slide">
+          <video
+            class="hero__video"
+            autoplay
+            muted
+            loop
+            playsinline
+            poster="media/assets/img/hero-img.webp"
+          >
+            <source src="media/assets/img/slide-4.mp4" type="video/mp4" />
+          </video>
+          <div class="hero__overlay"></div>
+          <div class="hero__content">
+            <h1 class="hero__headline">
+              Timeless <br />
+              Craftsmanship
+            </h1>
+            <p class="hero__subhead">Spaces shaped by intent and emotion.</p>
+            <a href="#projects" class="hero__cta">View Our Projects</a>
+          </div>
+        </div>
+
+        <div class="swiper-slide hero-slide">
+          <video
+            class="hero__video"
+            autoplay
+            muted
+            loop
+            playsinline
+            poster="media/assets/img/hero-img.webp"
+          >
+            <source src="media/assets/img/slide-5.mp4" type="video/mp4" />
+          </video>
+          <div class="hero__overlay"></div>
+          <div class="hero__content">
+            <h1 class="hero__headline">
+              Timeless <br />
+              Craftsmanship
+            </h1>
+            <p class="hero__subhead">Spaces shaped by intent and emotion.</p>
+            <a href="#projects" class="hero__cta">View Our Projects</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="swiper-pagination"></div>
+      <div class="scroll-indicator"><span></span></div>
+    </section>
+
+    <!-- new section -->
+
+    <section class="philosophy-section">
+      <div class="philosophy-heading">
+        <h2>The Platonic Principle</h2>
+        <p>
+          We don’t just design buildings — we shape timeless, human-centered
+          spaces.
+        </p>
+      </div>
+
+      <div class="philosophy-cards">
+        <div class="philosophy-card" data-delay="0">
+          <div
+            class="philosophy-img"
+            style="background-image: url('media/assets/img/Basement.webp')"
+          ></div>
+          <div class="philosophy-content">
+            <h3>01. Ethos</h3>
+            <p>
+              Every line drawn is grounded in purpose. We design for meaning,
+              not for noise.
+            </p>
+          </div>
+        </div>
+
+        <div class="philosophy-card" data-delay="150">
+          <div
+            class="philosophy-img"
+            style="background-image: url('media/assets/img/living.webp')"
+          ></div>
+          <div class="philosophy-content">
+            <h3>02. Materials</h3>
+            <p>
+              We work with the soul of the material — natural textures, real
+              depth, no façade.
+            </p>
+          </div>
+        </div>
+
+        <div class="philosophy-card" data-delay="300">
+          <div
+            class="philosophy-img"
+            style="background-image: url('media/assets/img/rest.webp')"
+          ></div>
+          <div class="philosophy-content">
+            <h3>03. Spatial Flow</h3>
+            <p>
+              Our designs guide movement and emotion. Every room tells a story.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- new section -->
+
+    <section class="about-grid" id="about">
+      <a href="#craft" class="about-box large" data-anim="left">
+        <img src="media/assets/img/port-1.webp" alt="Craft & Detail" />
+        <div class="about-text">
+          <h2>Crafted Forms</h2>
+          <p>Designs that speak through material, light, and texture.</p>
+        </div>
+      </a>
+      <a href="#timeless" class="about-box tall" data-anim="right">
+        <img src="media/assets/img/port-2.webp" alt="Timeless Design" />
+        <div class="about-text">
+          <h2>Timeless Edge</h2>
+          <p>We avoid trends. We shape icons.</p>
+        </div>
+      </a>
+      <a href="#emotion" class="about-box wide" data-anim="bottom">
+        <img src="media/assets/img/Basement.webp" alt="Structure Meets Emotion" />
+        <div class="about-text">
+          <h2>Structure & Emotion</h2>
+          <p>Clean geometry balanced with soul.</p>
+        </div>
+      </a>
+      <a href="#nature" class="about-box square" data-anim="top">
+        <img src="media/assets/img/living.webp" alt="Natural Integration" />
+        <div class="about-text">
+          <h2>Nature-Driven</h2>
+          <p>Designs that feel rooted and alive.</p>
+        </div>
+      </a>
+      <a href="#nature" class="about-box square" data-anim="top">
+        <img src="media/assets/img/rest.webp" alt="Natural Integration" />
+        <div class="about-text">
+          <h2>Highly Noticable</h2>
+          <p>Designs that feel rooted and WOW.</p>
+        </div>
+      </a>
+    </section>
+
+    <!-- new section -->
+
+    <section class="craft-process" id="craftProcess">
+      <div class="section-header">
+        <h2>Materials & Process</h2>
+        <p>
+          Let people feel the texture — wood, steel, stone, and precision in
+          every step.
+        </p>
+      </div>
+
+      <div class="craft-row reveal">
+        <div class="craft-text left-slide">
+          <h3>Concept</h3>
+          <p class="left-text">
+            Every project starts with a story. We dive deep into the client's
+            vision, location, and purpose to draw out meaningful ideas.
+          </p>
+        </div>
+        <div class="craft-image right-slide">
+          <img src="media/assets/img/Basement.webp" alt="Concept Image" />
+        </div>
+      </div>
+
+      <div class="craft-row reveal">
+        <div class="craft-image left-slide">
+          <img src="media/assets/img/rest.webp" alt="3D Render" />
+        </div>
+        <div class="craft-text right-slide">
+          <h3>3D Visualization</h3>
+          <p class="left-text">
+            We translate ideas into stunning 3D models. This is where space,
+            light, and texture start to breathe.
+          </p>
+        </div>
+      </div>
+
+      <div class="craft-row reveal">
+        <div class="craft-text left-slide">
+          <h3>Construction</h3>
+          <p class="left-text">
+            Precision-built. Material choices come to life — stone, metal, wood
+            — laid with intention and detail.
+          </p>
+        </div>
+        <div class="craft-image right-slide">
+          <img src="media/assets/img/living.webp" alt="Construction Image" />
+        </div>
+      </div>
+    </section>
+
+    <!-- new section -->
+
+    <section class="media-section" id="media">
+      <div class="media-section__overlay-glass"></div>
+      <div class="container">
+        <div class="media-section__content" data-animate>
+          <h2 class="media-section__title">Beyond the Build</h2>
+          <p class="media-section__intro">
+            We don’t just create environments — we capture them. Our media
+            division brings projects to life through cinematic storytelling,
+            giving every detail the frame it deserves.
+          </p>
+        </div>
+
+        <div class="media-section__video" data-animate>
+          <video muted autoplay loop playsinline>
+            <source src="media/assets/img/slide-1.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+
+        <div class="media-section__highlights" data-animate>
+          <ul>
+            <li>
+              <strong>Showreels:</strong> Elegant walkthroughs and reveal films
+            </li>
+            <li>
+              <strong>3D Visuals:</strong> Rendered previews that feel real
+            </li>
+            <li>
+              <strong>Brand Films:</strong> Strategy-driven creative narratives
+            </li>
+            <li>
+              <strong>Photography:</strong> Precision, lighting, atmosphere
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- new section -->
+    <section class="testimonial-section" id="testimonial">
+      <div class="testimonial-section__glass-bg"></div>
+      <div class="container">
+        <div class="testimonial-section__quote" data-animate>
+          <blockquote>
+            <p>
+              “Their attention to architectural detail, ability to execute, and
+              visual storytelling are unmatched. Working with them is not just a
+              service — it’s an experience.”
+            </p>
+            <footer>— CEO, Ellipse Developments</footer>
+          </blockquote>
+        </div>
+
+        <div class="testimonial-section__logos" data-animate>
+          <span>Trusted by:</span>
+          <div class="logos-wrapper">
+            <img src="media/assets/img/client (1).png" alt="Client 1" />
+            <img src="media/assets/img/client (2).png" alt="Client 2" />
+            <img src="media/assets/img/client (1).png" alt="Client 3" />
+            <img src="media/assets/img/client (2).png" alt="Client 4" />
+            <img src="media/assets/img/client (1).png" alt="Client 5" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- new section -->
+
+    <section class="cta-section" id="contact">
+      <div class="cta-bg-overlay"></div>
+      <div class="container">
+        <div class="cta-content" data-animate>
+          <h2 class="cta-title">Let’s Create Something Iconic</h2>
+          <p class="cta-text">
+            Whether it's architecture, interiors, media, or construction — we
+            bring visions into the real world with precision, beauty, and
+            boldness.
+          </p>
+          <a href="#contact-form" class="cta-button" data-animate
+            >Start Your Project</a
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- new section -->
+<footer class="footer-complex" id="footer">
+  <div class="footer-glow"></div>
+  <div class="footer-wave-layer"></div>
+
+  <div class="container">
+    <div class="footer-inner" data-animate>
+      <div class="footer-brand" data-animate>
+        <h2 class="footer-logo">Platonic</h2>
+        <p class="footer-slogan">Built with intention. Delivered with precision.</p>
+      </div>
+
+      <nav class="footer-nav" data-animate>
+        <ul>
+          <li><a href="#about">About</a></li>
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#media">Media</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+
+      <div class="footer-contact" data-animate>
+        <p><a href="mailto:hello@yourstudio.com">hello@youremail.com</a></p>
+        <div class="footer-socials">
+          <a href="#">Instagram</a>
+          <a href="#">Youtube</a>
+
+    <!-- new section -->
+  </body>
+</html>

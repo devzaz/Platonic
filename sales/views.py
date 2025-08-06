@@ -3,6 +3,9 @@ from django.contrib.auth.decorators import login_required
 from .forms import LeadForm, ContactForm
 from .models import Lead, Contact
 from django.http import JsonResponse, HttpResponseNotAllowed
+from django.contrib import messages
+from django.shortcuts import get_object_or_404
+from django.db.models import ProtectedError
 
 
 
@@ -72,5 +75,48 @@ def get_contacts_data(request):
     return JsonResponse({'contacts': contacts_list})
 
 
+@login_required
+def get_leads_data(request):
+    if request.method != 'GET':
+        return HttpResponseNotAllowed(['GET'])
+    
+    leads = Lead.objects.all()
+
+    leads_list = list(leads.values(
+        'Contact__name', 'status', 'estimated_value', 'assign_to__username'))
+    
+    return JsonResponse({'leads': leads_list})
+
+
+# @login_required
+# def delete_contact(request, email):
+#         try: 
+#             contact = Contact.objects.get(email=email)
+#             contact.delete()
+#             messages.success(request, 'Contact deleted successfully.')
+            
+#         except Contact.DoesNotExist:
+#             messages.error(request, 'Contact not found.')
+
+#         return redirect('SalesDashboard')
+
+
+@login_required
+def delete_contact(request, email):
+
+    contact = get_object_or_404(Contact, email=email)
+
+    try:
+        # Try to delete the object
+        contact.delete()
+        
+        # If successful, add a success message
+        messages.success(request, f"'{contact.name}' was deleted successfully.")
+
+    except ProtectedError:
+        # If it fails due to protection, add an error message
+        messages.error(request, f"Cannot delete '{contact.name}' because it is being used by other items.")
+
+    return redirect('SalesDashboard')
 
 

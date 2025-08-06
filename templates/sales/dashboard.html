@@ -163,6 +163,14 @@
              </div>
         </aside>
 
+        {% if messages %}
+        <script>
+            {% for message in messages %}
+                alert("{{ message|escapejs }}");
+            {% endfor %}
+        </script>
+    {% endif %}
+
         <!-- Main Content -->
         <main class="flex-1 p-6 lg:p-10 overflow-y-auto">
             <!-- Dashboard Page -->
@@ -216,12 +224,10 @@
                         <table class="w-full text-sm text-left text-gray-500">
                             <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                                 <tr>
-                                    <th scope="col" class="px-6 py-3">Lead Name</th>
                                     <th scope="col" class="px-6 py-3">Contact</th>
-                                    <th scope="col" class="px-6 py-3">Value</th>
+                                    <th scope="col" class="px-6 py-3">Estimated Value</th>
                                     <th scope="col" class="px-6 py-3">Status</th>
                                     <th scope="col" class="px-6 py-3">Assigned To</th>
-                                    <th scope="col" class="px-6 py-3">Last Contact</th>
                                     <th scope="col" class="px-6 py-3"><span class="sr-only">Actions</span></th>
                                 </tr>
                             </thead>
@@ -713,42 +719,18 @@
                 }
             }
 
-            function renderLeadsTable() {
-                const tableBody = document.getElementById('leads-table-body');
-                tableBody.innerHTML = mockLeads.map(lead => `
-                    <tr class="bg-white border-b hover:bg-gray-50">
-                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">${lead.name}</th>
-                        <td class="px-6 py-4">${lead.contact}</td>
-                        <td class="px-6 py-4">$${lead.value.toLocaleString()}</td>
-                        <td class="px-6 py-4">
-                            <span class="px-2 py-1 font-semibold text-xs rounded-full ${getStatusClass(lead.status).bg} ${getStatusClass(lead.status).text}">${lead.status}</span>
-                        </td>
-                        <td class="px-6 py-4">${lead.assignedTo}</td>
-                        <td class="px-6 py-4">${lead.lastContact}</td>
-                        <td class="px-6 py-4 text-right">
-                            <button class="text-gray-500 hover:text-blue-600"><i data-lucide="more-horizontal"></i></button>
-                        </td>
-                    </tr>
-                `).join('');
-            }
-
-            // async function renderContactsTable() {
-            //     const tableBody = document.getElementById('contacts-table-body');
-            //     tableBody.innerHTML = mockContacts.map(contact => `
+            // function renderLeadsTable() {
+            //     const tableBody = document.getElementById('leads-table-body');
+            //     tableBody.innerHTML = mockLeads.map(lead => `
             //         <tr class="bg-white border-b hover:bg-gray-50">
-            //             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap flex items-center">
-            //                 <i data-lucide="building" class="mr-3 text-gray-400 w-5 h-5"></i>
-            //                 ${contact.name}
-            //             </th>
+            //             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">${lead.name}</th>
+            //             <td class="px-6 py-4">${lead.contact}</td>
+            //             <td class="px-6 py-4">$${lead.value.toLocaleString()}</td>
             //             <td class="px-6 py-4">
-            //                 <span class="px-2 py-1 font-semibold text-xs rounded-full ${contact.type === 'Client' ? 'bg-green-100 text-green-800' : 'bg-indigo-100 text-indigo-800'}">${contact.type}</span>
+            //                 <span class="px-2 py-1 font-semibold text-xs rounded-full ${getStatusClass(lead.status).bg} ${getStatusClass(lead.status).text}">${lead.status}</span>
             //             </td>
-            //             <td class="px-6 py-4">${contact.industry}</td>
-            //             <td class="px-6 py-4">
-            //                 <div class="flex items-center space-x-2 text-xs"><i data-lucide="phone" class="w-3.5 h-3.5"></i> <span>${contact.phone}</span></div>
-            //                 <div class="flex items-center space-x-2 mt-1 text-xs"><i data-lucide="mail" class="w-3.5 h-3.5"></i> <span>${contact.email}</span></div>
-            //             </td>
-            //             <td class="px-6 py-4 font-medium">${contact.type === 'Client' ? contact.projects : 'N/A'}</td>
+            //             <td class="px-6 py-4">${lead.assignedTo}</td>
+            //             <td class="px-6 py-4">${lead.lastContact}</td>
             //             <td class="px-6 py-4 text-right">
             //                 <button class="text-gray-500 hover:text-blue-600"><i data-lucide="more-horizontal"></i></button>
             //             </td>
@@ -757,6 +739,48 @@
             // }
 
 
+                async function renderLeadsTable(){
+                    const tableBody = document.getElementById('leads-table-body');
+                    tableBody.innerHTML = '<tr><td colspan="7" class="text-center p-4">Loading...</td></tr>';
+
+                    try{
+                        const response = await fetch('/sales/api/leads/');
+                        const data = await response.json();
+                        const leads = data.leads;
+
+                        if (leads.length === 0) {
+                            tableBody.innerHTML = '<tr><td colspan="7" class="text-center p-4">No leads found.</td></tr>';
+                            return;
+                        }
+
+                        tableBody.innerHTML = leads.map(lead => `
+                            <tr class="bg-white border-b hover:bg-gray-50">
+                                <td class="px-6 py-4">${lead.Contact__name}</td>
+
+                                <td class="px-6 py-4">$${lead.estimated_value}</td>
+                                <td class="px-6 py-4">
+                                    <span class="px-2 py-1 font-semibold text-xs rounded-full ${getStatusClass(lead.status).bg} ${getStatusClass(lead.status).text}">${lead.status}</span>
+                                </td>
+                                <td class="px-6 py-4">${lead.assign_to__username}</td>
+                                <td class="px-6 py-4 text-right">
+                                    <button class="text-gray-500 hover:text-blue-600"><i data-lucide="more-horizontal"></i></button>
+                                </td>
+                            </tr>
+                        `).join('');
+
+                    // If using Lucide icons, you need to re-initialize them
+                        if (typeof lucide !== 'undefined') {
+                            lucide.createIcons();
+                        }
+
+                }       catch (error) {
+                        console.error('Error fetching contacts:', error);
+                        tableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4 text-red-500">Failed to load data.</td></tr>';
+                    }
+
+                }
+                document.addEventListener('DOMContentLoaded', renderLeadsTable);
+
 
 
                 async function renderContactsTable() {
@@ -764,7 +788,7 @@
                     tableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4">Loading...</td></tr>';
 
                     try {
-                        const response = await fetch('/api/contacts/');
+                        const response = await fetch('/sales/api/contacts/');
                         const data = await response.json();
                         const contacts = data.contacts;
 
@@ -784,7 +808,7 @@
                                 <td class="px-6 py-4">${contact.company_name}</td>
 
                                 <td class="px-6 py-4">
-                                    <span class="px-2 py-1 font-semibold text-xs rounded-full ${contact.contact_type === 'Client' ? 'bg-green-100 text-green-800' : 'bg-indigo-100 text-indigo-800'}">${contact.type}</span>
+                                    <span class="px-2 py-1 font-semibold text-xs rounded-full ${contact.contact_type === 'client' ? 'bg-green-100 text-green-800' : 'bg-indigo-100 text-indigo-800'}">${contact.contact_type}</span>
                                 </td>
 
                                 <td class="px-6 py-4">
@@ -801,9 +825,18 @@
                                 <td class="px-6 py-4 font-medium">${contact.contact_type === 'Client' ? contact.projects : 'N/A'}</td>
 
                                 <td class="px-6 py-4 text-right">
-                                    <button class="text-gray-500 hover:text-blue-600">
-                                        <i data-lucide="more-horizontal"></i>
-                                    </button>
+                                    <div class="flex justify-end space-x-4">
+                                        
+                                        
+                                        <a href="/sales/delete_contact/${contact.email}/" class="text-blue-600 hover:text-blue-800" title="Edit">
+                                            <i data-lucide="edit" class="w-4 h-4"></i>
+                                        </a>
+
+                                        <a href="/sales/delete_contact/${contact.email}/" class="text-blue-600 hover:text-blue-800" title="Delete">
+                                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                        </a>
+
+                                    </div>
                                 </td>
                             </tr>
                         `).join('');
@@ -906,7 +939,37 @@
                 modalProjectSelect.innerHTML = '<option value="">Select Project...</option>' + projectOptions;
             }
 
+            // --- DJANGO MESSAGE ALERT HANDLING ---
+            // This assumes you render messages in a hidden element, e.g.:
+            // <div id="django-messages" style="display:none;">{{ messages|join:"||" }}</div>
+            function showAlert(message, type = 'info') {
+                // type: 'info', 'success', 'warning', 'error'
+                const color = {
+                    info: 'bg-blue-100 text-blue-800',
+                    success: 'bg-green-100 text-green-800',
+                    warning: 'bg-yellow-100 text-yellow-800',
+                    error: 'bg-red-100 text-red-800'
+                }[type] || 'bg-blue-100 text-blue-800';
 
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `fixed top-6 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded shadow-lg ${color}`;
+                alertDiv.textContent = message;
+                document.body.appendChild(alertDiv);
+
+                setTimeout(() => {
+                    alertDiv.classList.add('opacity-0');
+                    setTimeout(() => alertDiv.remove(), 400);
+                }, 3000);
+            }
+
+            // Check for Django messages rendered in a hidden div
+            const djangoMessagesDiv = document.getElementById('django-messages');
+            if (djangoMessagesDiv && djangoMessagesDiv.textContent.trim()) {
+                // If you use multiple messages, split by delimiter
+                djangoMessagesDiv.textContent.split('||').forEach(msg => {
+                    if (msg.trim()) showAlert(msg.trim(), 'success');
+                });
+            }
 
 
 
