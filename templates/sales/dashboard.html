@@ -529,6 +529,29 @@
 
 
     <script>
+
+        const CSRF_TOKEN = (document.querySelector('input[name=csrfmiddlewaretoken]')||{}).value;
+
+        async function api(url, method="GET", body=null) {
+            const opts = {
+            method,
+            headers: {
+                "Accept": "application/json",
+                "X-CSRFToken": CSRF_TOKEN
+            },
+            credentials: "same-origin"
+            };
+            if (body) {
+            opts.headers["Content-Type"] = "application/json";
+            opts.body = JSON.stringify(body);
+            }
+            const r = await fetch(url, opts);
+            if (!r.ok) {
+            const t = await r.text();
+            throw new Error(t || r.statusText);
+            }
+            return r.json();
+        }
         document.addEventListener('DOMContentLoaded', function () {
             // --- DATA (Simulating API response) ---
             const mockLeads = [
@@ -546,11 +569,8 @@
                 { id: 4, name: 'Concrete Solutions Co.', type: 'Supplier', industry: 'Materials', phone: '555-0104', email: 'orders@concretes.co', projects: 0 },
             ];
             
-            let quoteItems = [
-                { id: 1, name: 'Initial Design & Blueprint', description: 'Phase 1 architectural drawings', quantity: 1, unitPrice: 15000 },
-                { id: 2, name: 'Structural Engineering Analysis', description: 'Seismic and load-bearing calculations', quantity: 1, unitPrice: 25000 },
-                { id: 3, name: 'Project Management Fee', description: '5% of estimated construction cost', quantity: 1, unitPrice: 60000 },
-            ];
+            let quotationId = null;               // becomes non-null after first save
+            let quoteItems = [];                  // authoritative state mirrored from server
 
             // --- INITIALIZE ICONS ---
             lucide.createIcons();
@@ -858,6 +878,18 @@
             // --- QUOTATION PAGE ---
             const quoteItemsBody = document.getElementById('quote-items-body');
 
+            // (async function preloadSelects(){
+            // try {
+            //     const leads = await fetch("/sales/api/leads/won/");
+            //     const sel = document.getElementById('quote-client-select');
+            //     sel.innerHTML = '<option value="">Select a Client</option>' +
+            //     leads.leads.map(l => `<option value="${l.lead_id}">${l.description}</option>`).join('');
+            // } catch (e) { console.warn(e); }
+            // })();
+
+                         
+            
+
             function renderQuoteItems() {
                 quoteItemsBody.innerHTML = quoteItems.map(item => `
                     <tr data-id="${item.id}" class="border-b">
@@ -926,18 +958,55 @@
                 }
             });
 
-            function populateSelects() {
+            // function populateSelects() {
+            //     const clientSelect = document.getElementById('quote-client-select');
+            //     const modalClientSelect = document.getElementById('modal-client');
+            //     const modalProjectSelect = document.getElementById('modal-project');
+                
+            //     const clientOptions = leads.filter(c => c.type === 'Client').map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            //     clientSelect.innerHTML = '<option value="">Select a Client</option>' + clientOptions;
+            //     modalClientSelect.innerHTML = '<option value="">Select Client...</option>' + clientOptions;
+
+            //     const projectOptions = mockLeads.filter(l => l.status === 'Won').map(l => `<option value="${l.id}">${l.name}</option>`).join('');
+            //     modalProjectSelect.innerHTML = '<option value="">Select Project...</option>' + projectOptions;
+            // }
+
+
+            //backup
+            async function populateSelects() {
+            try {
+                // Fetch leads data from your API
+                const response = await fetch("/sales/api/leads/won/");
+                const data = await response.json(); // <-- important, parse JSON
+                const leads = data.leads || data;   // depends on API response shape
+
+                // Get references to your selects
                 const clientSelect = document.getElementById('quote-client-select');
                 const modalClientSelect = document.getElementById('modal-client');
                 const modalProjectSelect = document.getElementById('modal-project');
-                
-                const clientOptions = mockContacts.filter(c => c.type === 'Client').map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+
+                // Clients
+                const clientOptions = leads
+                    .filter(c => c.type === 'Client')
+                    .map(c => `<option value="${c.id}">${c.name}</option>`)
+                    .join('');
+
                 clientSelect.innerHTML = '<option value="">Select a Client</option>' + clientOptions;
                 modalClientSelect.innerHTML = '<option value="">Select Client...</option>' + clientOptions;
 
-                const projectOptions = mockLeads.filter(l => l.status === 'Won').map(l => `<option value="${l.id}">${l.name}</option>`).join('');
+                // Projects (example: only won leads)
+                const projectOptions = leads
+                    .filter(l => l.status === 'Won')
+                    .map(l => `<option value="${l.lead_id}">${l.description}</option>`)
+                    .join('');
+
                 modalProjectSelect.innerHTML = '<option value="">Select Project...</option>' + projectOptions;
+
+            } catch (e) {
+                console.warn("Error populating selects:", e);
             }
+        }
+        document.addEventListener("DOMContentLoaded", populateSelects);
 
             // --- DJANGO MESSAGE ALERT HANDLING ---
             // This assumes you render messages in a hidden element, e.g.:

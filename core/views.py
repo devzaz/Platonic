@@ -5,6 +5,10 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.http import JsonResponse
+
+
+from sales.models import Lead
 
 
 
@@ -34,8 +38,26 @@ def login_page(request):
             if next_url:
                 return HttpResponseRedirect(next_url)
             else:
-                return redirect('SalesDashboard')
+                # return redirect('SalesDashboard')
+                return redirect('all_dep')
             
     
     return render(request, 'core/login.html')
+
+@login_required(login_url='login')
+def all_departments(request):
+    return render(request, 'core/all_dep.html')
+
+
+@login_required(login_url='login')
+def executive_dashboard(request):
+    return render(request, 'core/executive.html')
+
+
+@login_required(login_url='login')
+def administration(request):
+    return render(request, 'core/administration.html')
+
+
+
 

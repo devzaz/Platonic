@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLATONIC ERP - Executive Dashboard</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Chart.js for charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom Styles -->
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .sidebar-nav::-webkit-scrollbar { width: 4px; }
+        .sidebar-nav::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
+        .nav-item.active {
+            background-color: #2563eb;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .nav-item.active .nav-icon { color: white; }
+        .page-content { display: none; }
+        .page-content.active { display: block; }
+    </style>
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    
+    <!-- Mobile Menu Toggle Button -->
+    <button id="menu-toggle-btn" class="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-md shadow-md text-gray-600 hover:bg-gray-100">
+        <i data-lucide="menu" class="w-6 h-6"></i>
+    </button>
+
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="w-64 bg-white shadow-lg flex flex-col shrink-0 fixed lg:static h-full z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
+            <div class="flex items-center justify-between h-20 border-b px-4">
+                <h1 class="text-2xl font-bold text-blue-600">PLATONIC</h1>
+                <button id="sidebar-close-btn" class="lg:hidden text-gray-600 hover:text-gray-800">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <nav class="flex-1 px-4 py-4 sidebar-nav overflow-y-auto">
+                <!-- Executive Section -->
+                <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Executive View</p>
+                <ul>
+                    <li><a href="#" data-page="executive-dashboard" class="nav-item flex items-center p-3 my-1 rounded-lg active"><i data-lucide="bar-chart-2" class="nav-icon w-5 h-5"></i><span class="ml-4 font-medium">Executive Dashboard</span></a></li>
+                </ul>
+                <!-- Department Quick Links -->
+                <p class="px-3 mt-6 text-xs font-semibold text-gray-400 uppercase tracking-wider">Departments</p>
+                <ul>
+                    <li><a href="#" class="nav-item flex items-center p-3 my-1 rounded-lg"><i data-lucide="briefcase" class="nav-icon w-5 h-5"></i><span class="ml-4 font-medium">Sales & CRM</span></a></li>
+                    <li><a href="#" class="nav-item flex items-center p-3 my-1 rounded-lg"><i data-lucide="list-checks" class="nav-icon w-5 h-5"></i><span class="ml-4 font-medium">Project Ops</span></a></li>
+                    <li><a href="#" class="nav-item flex items-center p-3 my-1 rounded-lg"><i data-lucide="shopping-cart" class="nav-icon w-5 h-5"></i><span class="ml-4 font-medium">Procurement</span></a></li>
+                    <li><a href="#" class="nav-item flex items-center p-3 my-1 rounded-lg"><i data-lucide="heart-pulse" class="nav-icon w-5 h-5"></i><span class="ml-4 font-medium">HR & Legal</span></a></li>
+                </ul>
+            </nav>
+             <div class="p-4 border-t">
+                <div class="flex items-center">
+                    <img class="h-10 w-10 rounded-full object-cover" src="https://placehold.co/100x100/E2E8F0/4A5568?text=CEO" alt="CEO User" />
+                    <div class="ml-3">
+                        <p class="text-sm font-semibold text-gray-800">CEO / Admin</p>
+                        <p class="text-xs text-gray-500">ceo@platonic.com</p>
+                    </div>
+                </div>
+                <button id="logout-btn" class="w-full mt-4 flex items-center justify-center p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-colors">
+                    <i data-lucide="log-out" class="w-5 h-5 mr-2"></i>
+                    <span>Logout</span>
+                </button>
+             </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6 lg:p-10 overflow-y-auto">
+            <!-- Executive Dashboard Page -->
+            <div id="executive-dashboard-page" class="page-content active space-y-6">
+                <div class="flex flex-wrap justify-between items-center gap-4">
+                    <h2 class="text-3xl font-bold text-gray-800">Executive Dashboard</h2>
+                    <button id="log-equity-btn" class="bg-purple-600 text-white px-4 py-2 rounded-lg shadow hover:bg-purple-700 flex items-center"><i data-lucide="gem" class="w-5 h-5 mr-2"></i> Log Equity Transaction</button>
+                </div>
+                <div id="executive-dashboard-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md"><h3 class="text-lg font-semibold mb-4">Revenue vs. Profit (YTD)</h3><div class="relative h-80"><canvas id="revenueProfitChart"></canvas></div></div>
+                    <div class="bg-white p-6 rounded-lg shadow-md"><h3 class="text-lg font-semibold mb-4">Cash Flow (Last 6 Months)</h3><div class="relative h-80"><canvas id="cashFlowChart"></canvas></div></div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                    <div class="lg:col-span-3 bg-white p-6 rounded-lg shadow-md"><h3 class="text-lg font-semibold mb-4">Project Profitability</h3><div class="relative h-96"><canvas id="projectProfitabilityChart"></canvas></div></div>
+                    <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md"><h3 class="text-lg font-semibold mb-4">Sales Pipeline Value</h3><div class="relative h-96"><canvas id="salesPipelineChart"></canvas></div></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Overlay for mobile sidebar -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden lg:hidden"></div>
+    
+    <!-- Universal Financial Transaction Modal (V4 - Equity) -->
+    <div id="financial-modal-v4" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center hidden">
+        <div class="bg-white rounded-lg shadow-2xl p-8 w-full max-w-lg m-4">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">Log Equity Transaction</h3>
+                <button id="close-financial-modal-v4-btn" class="text-gray-400 hover:text-gray-600"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            <form id="equity-form" class="space-y-4">
+                <div><label class="block text-sm font-medium">Transaction Type</label><select id="equity-type" class="mt-1 w-full p-2 border rounded-md"><option value="contribution">Capital Contribution</option><option value="drawing">Owner's Drawing</option></select></div>
+                <div><label class="block text-sm font-medium">Partner / Owner</label><input type="text" id="equity-partner" required class="mt-1 w-full p-2 border rounded-md" placeholder="e.g., John Doe"></div>
+                <div><label class="block text-sm font-medium">Amount</label><div class="relative mt-1"><div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">$</div><input type="number" id="equity-amount" required class="w-full p-2 pl-7 border rounded-md"></div></div>
+                <div class="mt-8 flex justify-end space-x-3">
+                    <button type="button" id="cancel-financial-modal-v4-btn" class="px-4 py-2 border rounded-lg">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded-lg shadow">Save Transaction</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async function () {
+            // --- MOCK DATA FOR PHASE 5 ---
+            const mockProjects = [
+                { id: 'P001', name: 'Downtown Tower', client: 'Global Construction Inc.', revenue: 500000, cost: 350000 },
+                { id: 'P002', name: 'Suburban Mall', client: 'Prestige Real Estate', revenue: 1200000, cost: 980000 },
+                { id: 'P003', name: 'City Bridge', client: 'City Municipality', revenue: 2500000, cost: 2450000 },
+                { id: 'P004', name: 'Green Valley', client: 'Green Devs', revenue: 800000, cost: 650000 },
+            ];
+
+
+            const res_leads = await fetch('/sales/api/leads/');
+            const dl = await res_leads.json();
+            leads = Array.isArray(dl.leads) ? dl.leads : [];
+
+            // console.log('Leads:', dl);
+
+            // --- INITIALIZE ICONS ---
+            lucide.createIcons();
+
+            // --- SIDEBAR TOGGLE LOGIC ---
+            const sidebar = document.getElementById('sidebar');
+            const menuToggleBtn = document.getElementById('menu-toggle-btn');
+            const sidebarCloseBtn = document.getElementById('sidebar-close-btn');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            menuToggleBtn.addEventListener('click', () => { sidebar.classList.remove('-translate-x-full'); sidebarOverlay.classList.remove('hidden'); });
+            function closeSidebar() { sidebar.classList.add('-translate-x-full'); sidebarOverlay.classList.add('hidden'); }
+            sidebarCloseBtn.addEventListener('click', closeSidebar);
+            sidebarOverlay.addEventListener('click', closeSidebar);
+
+            // --- PAGE NAVIGATION ---
+            const navLinks = document.querySelectorAll('.nav-item');
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => { 
+                    e.preventDefault();
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                    if (window.innerWidth < 1024) closeSidebar();
+                });
+            });
+
+
+            let kpis = { gross_revenue_ytd: 0, net_profit_ytd: 0, open_ap: 0, open_ar: 0 };
+
+            try {
+            const res = await fetch('/projects/api/kpis/?mode=single&settled=0', {
+                credentials: 'same-origin',
+                headers: { 'Accept': 'application/json' }
+            });
+            const ct = res.headers.get('content-type') || '';
+            const body = ct.includes('application/json') ? await res.json() : await res.text();
+            if (!ct.includes('application/json')) throw new Error(String(body).slice(0,200));
+            kpis = body;
+            console.log('kpis:', kpis); // sanity
+            } catch (e) {
+            console.error('KPI API error', e);
+            }
+
+            // currency formatter
+            const money = (v) => {
+            const n = Number(v || 0);
+            if (Math.abs(n) >= 1_000_000) return '$' + (n/1_000_000).toFixed(1) + 'M';
+            if (Math.abs(n) >= 1_000)     return '$' + (n/1_000).toFixed(1) + 'K';
+            return '$' + n.toLocaleString();
+            };
+            
+            // --- MODAL HANDLING (V4) ---
+            const financialModalV4 = document.getElementById('financial-modal-v4');
+            document.getElementById('log-equity-btn').addEventListener('click', () => financialModalV4.classList.remove('hidden'));
+            document.getElementById('close-financial-modal-v4-btn').addEventListener('click', () => financialModalV4.classList.add('hidden'));
+            document.getElementById('cancel-financial-modal-v4-btn').addEventListener('click', () => financialModalV4.classList.add('hidden'));
+
+            // --- RENDER FUNCTIONS ---
+            async function renderExecutiveDashboard() {
+                document.getElementById('executive-dashboard-cards').innerHTML = `
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <p class="text-sm">Gross Revenue (YTD)</p>
+                    <p class="text-3xl font-bold">${money(kpis.gross_revenue_ytd)}</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <p class="text-sm">Net Profit (YTD)</p>
+                    <p class="text-3xl font-bold ${Number(kpis.net_profit_ytd) >= 0 ? 'text-green-600' : 'text-red-600'}">
+                    ${money(kpis.net_profit_ytd)}
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <p class="text-sm">Open Accounts Payable</p>
+                    <p class="text-3xl font-bold text-red-600">${money(kpis.open_ap)}</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <p class="text-sm">Open Accounts Receivable</p>
+                    <p class="text-3xl font-bold text-yellow-500">${money(kpis.open_ar)}</p>
+                </div>
+                `;
+                
+                // Chart rendering logic
+                const charts = {};
+                function renderChart(canvasId, type, data, options) {
+                    const ctx = document.getElementById(canvasId).getContext('2d');
+                    if (charts[canvasId] instanceof Chart) charts[canvasId].destroy();
+                    charts[canvasId] = new Chart(ctx, { type, data, options });
+                }
+
+
+
+                let cf = { labels: [], cash_in: [], cash_out: [] };
+                try {
+                const res = await fetch('/projects/api/cashflow/?months=6&settled=1', {
+                    credentials: 'same-origin',
+                    headers: { 'Accept': 'application/json' }
+                });
+                const ct = res.headers.get('content-type') || '';
+                if (!res.ok || !ct.includes('application/json')) {
+                    const preview = await res.text();
+                    throw new Error(`/projects/api/cashflow/ -> ${res.status} ${res.statusText}\n${preview.slice(0,200)}…`);
+                }
+                cf = await res.json();
+                console.log('cashflow:', cf); // sanity check
+                } catch (e) {
+                console.error('Cashflow API error', e);
+                }
+
+
+
+                // Fallback if empty
+                const labels = (cf.labels && cf.labels.length) ? cf.labels : ['Jan','Feb','Mar','Apr','May','Jun'];
+                const cashIn  = (cf.cash_in  && cf.cash_in.length)  ? cf.cash_in  : [0,0,0,0,0,0];
+                const cashOut = (cf.cash_out && cf.cash_out.length) ? cf.cash_out : [0,0,0,0,0,0];
+
+                const moneyTick = v => '$' + Number(v).toLocaleString();
+
+
+
+                renderChart('cashFlowChart', 'line',
+                    {
+                    labels,
+                    datasets: [
+                        { label: 'Cash In',  data: cashIn,  borderColor: '#22C55E', tension: 0.1 },
+                        { label: 'Cash Out', data: cashOut, borderColor: '#EF4444', tension: 0.1 }
+                    ]
+                    },
+                    {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                        callbacks: {
+                            label: (ctx) => `${ctx.dataset.label}: ${moneyTick(ctx.parsed.y)}`
+                        }
+                        }
+                    },
+                    scales: { y: { ticks: { callback: moneyTick } } }
+                    }
+                );
+
+
+                // renderChart('cashFlowChart', 'line', 
+                //     { labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'], datasets: [
+                //         { label: 'Cash In', data: [420, 310, 520, 430, 610, 740], borderColor: '#22C55E', tension: 0.1 },
+                //         { label: 'Cash Out', data: [340, 250, 420, 340, 490, 590], borderColor: '#EF4444', tension: 0.1 }
+                //     ]},
+                //     { responsive: true, maintainAspectRatio: false, scales: { y: { ticks: { callback: v => `$${v}K` } } } }
+                // );
+
+
+                let rp = { labels: [], revenue: [], profit: [] };
+                try {
+                const res = await fetch('/projects/api/revenue-profit/?months=6&mode=single', {
+                    credentials: 'same-origin',
+                    headers: { 'Accept': 'application/json' }
+                });
+                const ct = res.headers.get('content-type') || '';
+                if (!res.ok || !ct.includes('application/json')) {
+                    const preview = await res.text();
+                    throw new Error(`/projects/api/revenue-profit/ -> ${res.status} ${res.statusText}\n${preview.slice(0,200)}…`);
+                }
+                rp = await res.json();
+                console.log('rev/profit:', rp); // sanity
+                } catch (e) {
+                console.error('RevenueProfit API error', e);
+                }
+
+
+
+                const rLabels = (rp.labels && rp.labels.length) ? rp.labels : ['Jan','Feb','Mar','Apr','May','Jun'];
+                const rRevenue = (rp.revenue && rp.revenue.length) ? rp.revenue : [0,0,0,0,0,0];
+                const rProfit  = (rp.profit  && rp.profit.length)  ? rp.profit  : [0,0,0,0,0,0];
+
+                const moneyTickK = (v) => {
+                // show in K if you prefer bar units in “K”, else remove the /1000 lines
+                return '$' + Math.round(Number(v)/1000).toLocaleString() + 'K';
+                };
+
+                renderChart('revenueProfitChart', 'bar',
+                {
+                    labels: rLabels,
+                    datasets: [
+                    { label: 'Revenue', data: rRevenue, backgroundColor: '#3B82F6' },
+                    { label: 'Profit',  data: rProfit,  backgroundColor: '#10B981' }
+                    ]
+                },
+                {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: {
+                    legend: { position: 'bottom' },
+                    tooltip: {
+                        callbacks: {
+                        // show full currency in tooltip
+                        label: (ctx) => {
+                            const val = ctx.parsed.y;
+                            return `${ctx.dataset.label}: ৳${Number(val).toLocaleString()}`;
+                        }
+                        }
+                    }
+                    },
+                    scales: {
+                    y: {
+                        ticks: { callback: moneyTickK }
+                    }
+                    }
+                }
+                );
+
+
+
+                
+
+
+                // renderChart('revenueProfitChart', 'bar', 
+                //     { labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'], datasets: [
+                //         { label: 'Revenue', data: [400, 300, 500, 450, 600, 750], backgroundColor: '#3B82F6' },
+                //         { label: 'Profit', data: [80, 60, 100, 90, 120, 150], backgroundColor: '#10B981' }
+                //     ]},
+                //     { responsive: true, maintainAspectRatio: false, scales: { y: { ticks: { callback: v => `$${v}K` } } } }
+                // );
+
+
+
+
+                let pp = { labels: [], revenue: [], cost: [], profit: [] };
+                try {
+                const res = await fetch('/projects/api/project-profitability/?months=6&mode=single&limit=8&order_by=profit', {
+                    credentials: 'same-origin',
+                    headers: { 'Accept': 'application/json' }
+                });
+                const ct = res.headers.get('content-type') || '';
+                const body = ct.includes('application/json') ? await res.json() : await res.text();
+                if (!ct.includes('application/json')) throw new Error(String(body).slice(0,200));
+                pp = body;
+                console.log('project profitability:', pp);
+                } catch (e) {
+                console.error('ProjectProfitability API error', e);
+                pp = { labels: ['No data'], revenue: [0], cost: [0], profit: [0] };
+                }
+
+                const pLabels = pp.labels?.length ? pp.labels : ['No data'];
+                const pProfit = pp.profit?.length ? pp.profit : new Array(pLabels.length).fill(0);
+                const pRevenue = pp.revenue ?? new Array(pLabels.length).fill(0);
+                const pCost = pp.cost ?? new Array(pLabels.length).fill(0);
+
+                // money formatter
+                // const moneyTick = v => '৳' + Number(v).toLocaleString();
+
+                // color profit bars green (+) / red (-)
+                const profitColors = pProfit.map(v => (Number(v) >= 0 ? '#10B981' : '#EF4444'));
+
+                renderChart(
+                'projectProfitabilityChart',
+                'bar',
+                {
+                    labels: pLabels,
+                    datasets: [
+                    { label: 'Profit', data: pProfit, backgroundColor: profitColors }
+                    ]
+                },
+                {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                        label: (ctx) => {
+                            const i = ctx.dataIndex;
+                            const rev = pRevenue[i] ?? 0;
+                            const cost = pCost[i] ?? 0;
+                            const pr = pProfit[i] ?? 0;
+                            return [
+                            `Profit: ${moneyTick(pr)}`,
+                            `Revenue: ${moneyTick(rev)}`,
+                            `Cost: ${moneyTick(cost)}`
+                            ];
+                        }
+                        }
+                    }
+                    },
+                    scales: {
+                    x: { ticks: { callback: moneyTick } }
+                    }
+                }
+                );
+
+
+                // renderChart('projectProfitabilityChart', 'bar', 
+                //     { labels: mockProjects.map(p => p.name), datasets: [{ label: 'Profit', data: mockProjects.map(p => p.revenue - p.cost), backgroundColor: ['#8B5CF6', '#F97316', '#14B8A6', '#64748B'] }] },
+                //     { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { callback: v => `$${v/1000}K` } } } }
+                // );
+
+
+                const statusOf = (l) => String(l.status ?? '').toLowerCase();
+
+                const list = Array.isArray(leads) ? leads : [];
+
+                const contactedCount = list.filter(l => statusOf(l).includes('contacted')).length;
+                const wonCount       = list.filter(l => statusOf(l).includes('won')).length;
+                const qualifiedCount = list.filter(l => statusOf(l).includes('qualified')).length;
+                const newCount = list.filter(l => statusOf(l).includes('new')).length;
+
+
+                renderChart('salesPipelineChart', 'doughnut', 
+                    { labels: ['Contacted', 'Won', 'Qualified', 'New'], datasets: [{ data: [contactedCount, wonCount, qualifiedCount, newCount], backgroundColor: ['#3B82F6', '#F59E0B', '#A78BFA', '#10B981'] }] },
+                    { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: c => `${c.label}: $${c.raw}K` } } } }
+                );
+            }
+
+            // --- INITIAL LOAD ---
+            function initialRender() {
+                renderExecutiveDashboard();
+            }
+            initialRender();
+        });
+    </script>
+</body>
+</html>
+
+

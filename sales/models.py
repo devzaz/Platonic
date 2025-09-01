@@ -1,6 +1,8 @@
 from django.db import models
 from django.conf import settings
 from decimal import Decimal
+from django.utils import timezone
+from uuid import uuid4
 
 class Contact(models.Model):
     """
@@ -12,7 +14,7 @@ class Contact(models.Model):
         ('supplier', 'Supplier'),
         ('consultant', 'Consultant')
     )
-
+    contact_id = models.UUIDField(editable=False,unique=True, default=uuid4)
     contact_type = models.CharField(max_length=30, choices=TYPE_COICES)
     name = models.CharField(max_length=255)
     company_name = models.CharField(max_length=255, blank=True, null=True, help_text="Optional")
@@ -41,7 +43,7 @@ class Contact(models.Model):
     )
     
     def __str__(self):
-        return self.name
+        return str(self.name)
     
 
 
@@ -58,7 +60,7 @@ class Lead(models.Model):
         ('won', 'Won'),
         ('lost', 'Lost'),
     )
-
+    lead_id = models.CharField(max_length=50, unique=True, blank=True, null=True, editable=False)
     Contact = models.ForeignKey(Contact, on_delete=models.CASCADE)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new')
     source = models.CharField(max_length=100, blank=True, help_text="e.g., 'Website', 'Referral'")
@@ -114,11 +116,14 @@ class QuotationItem(models.Model):
     Represents a single line item within a Quotation.
     This is the "linked model".
     """
+    
     quotation = models.ForeignKey(
         Quotation,
         on_delete=models.CASCADE,
         related_name='items' # This link allows us to do quotation.items.all()
     )
+    item_id = models.CharField(max_length=50, unique=True, editable=False, null=True)
+    title = models.CharField(max_length=100, help_text="e.g., 'Website Development'", blank=True, null=True)
     description = models.CharField(max_length=255, help_text="e.g., 'Phase 1: Concept Design'")
     quantity = models.DecimalField(max_digits=10, decimal_places=2, default=1)
     unit_price = models.DecimalField(max_digits=12, decimal_places=2)
@@ -129,5 +134,10 @@ class QuotationItem(models.Model):
         return self.quantity * self.unit_price
     
     def __str__(self):
-        return f"Item for Quotaion {self.quotation.quotation_id}: {self.description}"
+        return f"{self.item_id} - {self.title}"
+
+
+
+
+
 

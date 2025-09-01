@@ -46,7 +46,7 @@ class PurchaseOrderItem(models.Model):
         return self.quantity * self.unit_price
 
     def __str__(self):
-        return self.description
+        return f"Item {self.description} for PO {self.purchase_order.po_id} and total amount is {self.total_price}"
     
 
 class GoodsReceivedNote(models.Model):
@@ -70,6 +70,7 @@ class StockItem(models.Model):
     quantity_on_hand = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     unit = models.CharField(max_length=20, default='pcs')
     warehouse_location = models.CharField(max_length=100, blank=True)
+    is_stock_out = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name

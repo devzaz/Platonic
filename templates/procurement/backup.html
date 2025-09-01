@@ -1,0 +1,12 @@
+function renderVendors() {
+                const tableBody = vendors.map(v => `
+                    <tr class="border-b">
+                        <td class="px-6 py-4 font-medium">${v.name}</td><td class="px-6 py-4">${v.performance_rating}/5.0</td>
+                        <td class="px-6 py-4">$${v.totalSpend.toLocaleString()}</td>
+                        <td class="px-6 py-4"><button class="view-vendor-btn text-blue-600 hover:underline" data-id="${v.id}">View</button></td>
+                    </tr>`).join('');
+                renderTable('vendors-table-container', ['Name', 'Rating', 'Total Spend', 'Action'], tableBody);
+                 document.querySelectorAll('.view-vendor-btn').forEach(btn => {
+                    btn.addEventListener('click', e => switchPage('vendor-detail', { id: e.target.dataset.id }));
+                });
+            }

@@ -155,7 +155,7 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', async function () {
             // --- MOCK DATA FOR PHASE 4 ---
             const mockEmployees = [
                 { id: 'E001', name: 'Alice', department: 'Design', role: 'Lead Architect', joinDate: '2022-01-15' },
@@ -173,6 +173,37 @@
                 { id: 'C003', name: 'Suburban Mall Expansion NDA', type: 'NDA', status: 'Pending Signature' },
             ];
             const mockContractTemplates = [ 'Client Project Agreement', 'Standard Employment Contract', 'Non-Disclosure Agreement (NDA)' ];
+
+            // const employees = await fetch('/hr/api/employees/');
+            // const { employees_data } = await employees.json();
+
+
+            let emp_data = [];
+            let leave_requests_data = [];
+
+            // 2) fetch and assign from the right key
+            const res_employee = await fetch('/hr/api/employees/', { credentials: 'same-origin' });
+            if (!res_employee.ok) {
+                console.error('Failed to load employees', res_employee.status, res_employee.statusText);
+            } else {
+                const data = await res_employee.json();
+                emp_data = Array.isArray(data.employees) ? data.employees : [];
+            }
+
+            const res_leave_requests = await fetch('/hr/api/leave_requests/', { credentials: 'same-origin' });
+            if (!res_leave_requests.ok){
+                console.error("Failed to load leave requests");
+            
+            }else{
+                const data = await res_leave_requests.json();
+                leave_requests_data = Array.isArray(data.leave_requests) ? data.leave_requests : [];
+            }
+
+
+            const res_payslips = await fetch('/hr/api/payslips/', { credentials: 'same-origin' });
+            const { payslips } = await res_payslips.json();
+
+            console.log('payslips:', payslips);
 
             // --- INITIALIZE ICONS ---
             lucide.createIcons();
@@ -233,44 +264,138 @@
                     </table>`;
             }
 
+
+
+
+            // function renderHRDashboard() {
+            //     document.getElementById('hr-dashboard-cards').innerHTML = `
+            //         <div class="bg-white p-6 rounded-lg shadow-md"><p class="text-sm">Total Employees</p><p class="text-3xl font-bold">${emp_data.length}</p></div>
+            //         <div class="bg-white p-6 rounded-lg shadow-md"><p class="text-sm">On Leave Today</p><p class="text-3xl font-bold">2</p></div>
+            //         <div class="bg-white p-6 rounded-lg shadow-md"><p class="text-sm">Pending Leave Requests</p><p class="text-3xl font-bold">4</p></div>
+            //         <div class="bg-white p-6 rounded-lg shadow-md"><p class="text-sm">Open Positions</p><p class="text-3xl font-bold">3</p></div>
+            //     `;
+            //     const ctx = document.getElementById('headcountChart').getContext('2d');
+            //     if(window.headcountChart instanceof Chart) {
+            //         window.headcountChart.destroy();
+            //     }
+            //     window.headcountChart = new Chart(ctx, {
+            //         type: 'pie',
+            //         data: {
+            //             labels: ['Design', 'Construction', 'Sales', 'HR', 'Finance'],
+            //             datasets: [{ data: [5, 12, 4, 2, 3], backgroundColor: ['#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EF4444'] }]
+            //         },
+            //         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+            //     });
+            //     document.getElementById('anniversaries-list').innerHTML = mockEmployees.map(e => `
+            //         <div class="flex justify-between items-center p-2 bg-gray-50 rounded-md">
+            //             <div><p class="font-medium">${e.name}</p><p class="text-sm text-gray-500">${e.joinDate}</p></div>
+            //             <span class="text-sm text-blue-600">Work Anniversary</span>
+            //         </div>`).join('');
+            // }
+
+
+
             function renderHRDashboard() {
-                document.getElementById('hr-dashboard-cards').innerHTML = `
-                    <div class="bg-white p-6 rounded-lg shadow-md"><p class="text-sm">Total Employees</p><p class="text-3xl font-bold">${mockEmployees.length}</p></div>
-                    <div class="bg-white p-6 rounded-lg shadow-md"><p class="text-sm">On Leave Today</p><p class="text-3xl font-bold">2</p></div>
-                    <div class="bg-white p-6 rounded-lg shadow-md"><p class="text-sm">Pending Leave Requests</p><p class="text-3xl font-bold">4</p></div>
-                    <div class="bg-white p-6 rounded-lg shadow-md"><p class="text-sm">Open Positions</p><p class="text-3xl font-bold">3</p></div>
-                `;
-                const ctx = document.getElementById('headcountChart').getContext('2d');
-                if(window.headcountChart instanceof Chart) {
-                    window.headcountChart.destroy();
-                }
-                window.headcountChart = new Chart(ctx, {
-                    type: 'pie',
-                    data: {
-                        labels: ['Design', 'Construction', 'Sales', 'HR', 'Finance'],
-                        datasets: [{ data: [5, 12, 4, 2, 3], backgroundColor: ['#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EF4444'] }]
-                    },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
-                });
-                document.getElementById('anniversaries-list').innerHTML = mockEmployees.map(e => `
-                    <div class="flex justify-between items-center p-2 bg-gray-50 rounded-md">
-                        <div><p class="font-medium">${e.name}</p><p class="text-sm text-gray-500">${e.joinDate}</p></div>
-                        <span class="text-sm text-blue-600">Work Anniversary</span>
-                    </div>`).join('');
-            }
+            // 1) Count employees by department from emp_data
+            const deptLabelMap = {
+                HR: 'Human Resources',
+                Finance: 'Finance',
+                Sales: 'Sales',
+                Construction: 'Construction',
+                Design: 'Design',
+            };
+
+            const countsByDept = (Array.isArray(emp_data) ? emp_data : []).reduce((acc, e) => {
+                const key = e.department; // your API returns department codes like 'HR', 'Finance', etc.
+                acc[key] = (acc[key] || 0) + 1;
+                return acc;
+            }, {});
+
+            const labels = Object.keys(countsByDept).map(k => deptLabelMap[k] || k);
+            const values = Object.keys(countsByDept).map(k => countsByDept[k]);
+
+            // Fallback if no data
+            const chartLabels = labels.length ? labels : ['No data'];
+            const chartValues = values.length ? values : [0];
+
+            // 2) Fill cards
+            document.getElementById('hr-dashboard-cards').innerHTML = `
+                <div class="bg-white p-6 rounded-lg shadow-md"><p class="text-sm">Total Employees</p><p class="text-3xl font-bold">${(emp_data || []).length}</p></div>
+                <div class="bg-white p-6 rounded-lg shadow-md"><p class="text-sm">On Leave Today</p><p class="text-3xl font-bold">0{will work}</p></div>
+                <div class="bg-white p-6 rounded-lg shadow-md"><p class="text-sm">Pending Leave Requests</p><p class="text-3xl font-bold">${(leave_requests_data || []).length}</p></div>
+                <div class="bg-white p-6 rounded-lg shadow-md"><p class="text-sm">Open Positions</p><p class="text-3xl font-bold">3</p></div>
+            `;
+
+            // 3) Render chart from emp_data
+            const ctx = document.getElementById('headcountChart').getContext('2d');
+            if (window.headcountChart instanceof Chart) window.headcountChart.destroy();
+            window.headcountChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                labels: chartLabels,
+                datasets: [{
+                    data: chartValues,
+                    // optional colors; remove or change as you like
+                    backgroundColor: ['#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EF4444', '#06B6D4', '#F97316'],
+                }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+            });
+
+            // 4) (Optional) anniversaries can still use your mocks, or you can switch to emp_data if you expose join dates
+            document.getElementById('anniversaries-list').innerHTML = mockEmployees.map(e => `
+                <div class="flex justify-between items-center p-2 bg-gray-50 rounded-md">
+                <div><p class="font-medium">${e.name}</p><p class="text-sm text-gray-500">${e.joinDate}</p></div>
+                <span class="text-sm text-blue-600">Work Anniversary</span>
+                </div>`).join('');
+}       
+
+
+
+
+
+
+
+
+
+            console.log('employees length:', emp_data.length);
+            // function renderEmployees() {
+            //     const tableBody = employees_data.map(e => `
+            //         <tr class="border-b">
+            //             <td class="px-6 py-4 font-medium">${e.user__username}</td><td class="px-6 py-4">${e.employee_id}</td>
+            //             <td class="px-6 py-4">${e.department}</td><td class="px-6 py-4">${e.designation}</td>
+            //             <td class="px-6 py-4"><button class="view-employee-btn text-blue-600 hover:underline" data-id="${e.employee_id}">View</button></td>
+            //         </tr>`).join('');
+            //     renderTable('employees-table-container', ['Name', 'Employee ID', 'Department', 'Role', 'Action'], tableBody);
+            //     document.querySelectorAll('.view-employee-btn').forEach(btn => {
+            //         btn.addEventListener('click', e => switchPage('employee-detail', { id: e.target.dataset.id }));
+            //     });
+            // }
 
             function renderEmployees() {
-                const tableBody = mockEmployees.map(e => `
-                    <tr class="border-b">
-                        <td class="px-6 py-4 font-medium">${e.name}</td><td class="px-6 py-4">${e.id}</td>
-                        <td class="px-6 py-4">${e.department}</td><td class="px-6 py-4">${e.role}</td>
-                        <td class="px-6 py-4"><button class="view-employee-btn text-blue-600 hover:underline" data-id="${e.id}">View</button></td>
-                    </tr>`).join('');
-                renderTable('employees-table-container', ['Name', 'Employee ID', 'Department', 'Role', 'Action'], tableBody);
-                document.querySelectorAll('.view-employee-btn').forEach(btn => {
-                    btn.addEventListener('click', e => switchPage('employee-detail', { id: e.target.dataset.id }));
-                });
-            }
+            // 3) guard against undefined so map never crashes
+            const list = Array.isArray(emp_data) ? emp_data : [];
+            const tableBody = list.map(e => `
+            <tr class="border-b">
+                <td class="px-6 py-4 font-medium">${e.user__username}</td>
+                <td class="px-6 py-4">${e.employee_id}</td>
+                <td class="px-6 py-4">${e.department}</td>
+                <td class="px-6 py-4">${e.designation}</td>
+                <td class="px-6 py-4">
+                <button class="view-employee-btn text-blue-600 hover:underline" data-id="${e.employee_id}">View</button>
+                </td>
+            </tr>`).join('');
+            renderTable('employees-table-container', ['Name','Employee ID','Department','Role','Action'], tableBody);
+            document.querySelectorAll('.view-employee-btn').forEach(btn => {
+            btn.addEventListener('click', e => switchPage('employee-detail', { id: e.target.dataset.id }));
+            });
+        }
+
+
+
+
+
+            
 
             function renderEmployeeDetailPage(employeeId) {
                 const emp = mockEmployees.find(e => e.id === employeeId);
@@ -292,9 +417,9 @@
             }
 
             function renderPayroll() {
-                renderTable('payroll-table-container', ['Period', 'Status', 'Total Amount', 'Action'], mockPayroll.map(p => `
-                    <tr class="border-b"><td class="px-6 py-4 font-medium">${p.period}</td><td class="px-6 py-4">${p.status}</td>
-                    <td class="px-6 py-4">$${p.total.toLocaleString()}</td>
+                renderTable('payroll-table-container', ['Period', 'Status', 'Total Amount', 'Action'], payslips.map(p => `
+                    <tr class="border-b"><td class="px-6 py-4 font-medium">${p.payroll__period_month}/${p.payroll__period_year}</td><td class="px-6 py-4">${p.payroll__status}</td>
+                    <td class="px-6 py-4">$${p.net_pay.toLocaleString()}</td>
                     <td class="px-6 py-4"><button class="text-blue-600 hover:underline">View</button></td></tr>`).join(''));
             }
 
@@ -364,11 +489,11 @@
             // --- INITIAL LOAD ---
             function initialRender() {
                 renderHRDashboard();
-                renderEmployees();
                 renderPayroll();
                 renderLeavePage();
                 renderLegalDashboard();
                 renderContracts();
+                renderEmployees();
                 switchPage('hr-dashboard');
             }
             initialRender();

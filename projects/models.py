@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from sales.models import Contact
 from core.models import ChartOfAccounts
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class Project(models.Model):
@@ -38,6 +39,7 @@ class Project(models.Model):
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    progress = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(100)])
 
     def __str__(self):
         return self.name

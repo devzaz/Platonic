@@ -4,14 +4,25 @@ from projects.models import Project # For timesheets
 from projects.models import FinancialTransaction
 from core.models import ChartOfAccounts
 import datetime
+from uuid import uuid4
 
 class Employee(models.Model):
+
+    DEPARTMENT_CHOICES = (
+        ('HR', 'Human Resources'),
+        ('Finance', 'Finance'),
+        ('Sales', 'Sales'),
+        ('Construction', 'Construction'),
+        ('Design', 'Design'),
+    )
+
+
     """Detailed employee profile, linked to a system user."""
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    employee_id = models.CharField(max_length=20, unique=True)
+    employee_id = models.CharField(max_length=20, unique=True, help_text="EMP-1001.....")
     date_of_birth = models.DateField()
     joining_date = models.DateField()
-    department = models.CharField(max_length=100)
+    department = models.CharField(max_length=100, choices=DEPARTMENT_CHOICES)
     designation = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=20)
     address = models.TextField()

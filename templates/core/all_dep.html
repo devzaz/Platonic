@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLATONIC ERP - Master Control Panel</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Custom Styles -->
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f1f5f9; /* A slightly different background for this master page */
+        }
+        .dashboard-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+    </style>
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-slate-100">
+
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="bg-white shadow-md">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-20">
+                    <div class="flex items-center">
+                        <h1 class="text-3xl font-bold text-blue-600">PLATONIC</h1>
+                        <span class="ml-4 text-sm font-medium text-gray-500">Master Control Panel</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="text-right mr-4">
+                            <p class="text-sm font-semibold text-gray-800">{{request.user.username}}</p>
+                            <p class="text-xs text-gray-500">{{request.user.email}}</p>
+                        </div>
+                        <img class="h-12 w-12 rounded-full object-cover" src="https://placehold.co/100x100/E2E8F0/4A5568?text=CEO" alt="CEO User">
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-extrabold text-gray-900">Company Modules</h2>
+                <p class="mt-2 text-lg text-gray-600">Select a department dashboard to view and manage its operations.</p>
+            </div>
+
+            <!-- Dashboard Card Grid -->
+            <div id="dashboard-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Cards will be injected here by JS -->
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const dashboards = [
+                {
+                    phase: 1,
+                    title: 'Sales & CRM',
+                    icon: 'briefcase',
+                    color: 'blue',
+                    description: 'Manage leads, contacts, and generate quotations to drive business growth.',
+                    link: '{% url "SalesDashboard" %}',
+                     // Replace with link to Phase 1 file
+                },
+                {
+                    phase: 2,
+                    title: 'Project Operations',
+                    icon: 'list-checks',
+                    color: 'green',
+                    description: 'Oversee project milestones, track progress, and manage operational documents.',
+                    link: '{% url "operations_index" %}' // Replace with link to Phase 2 file
+                },
+                {
+                    phase: 3,
+                    title: 'Supply Chain & Procurement',
+                    icon: 'shopping-cart',
+                    color: 'amber',
+                    description: 'Handle purchase orders, manage vendors, and track inventory and payables.',
+                    link: '{% url "procurement_home" %}' // Replace with link to Phase 3 file
+                },
+                {
+                    phase: 4,
+                    title: 'HR & Legal',
+                    icon: 'heart-pulse',
+                    color: 'indigo',
+                    description: 'Manage employees, run payroll, and generate legal contracts securely.',
+                    link: '{% url "hr_home" %}' // Replace with link to Phase 4 file
+                },
+                {
+                    phase: 5,
+                    title: 'Executive Dashboard',
+                    icon: 'bar-chart-2',
+                    color: 'slate',
+                    description: 'High-level overview of all company KPIs, financial health, and project profitability.',
+                    link: '{% url "executive" %}' // Replace with link to Phase 5 file
+                },
+                {
+                    phase: 5,
+                    title: 'Administration',
+                    icon: 'sliders-horizontal',
+                    color: 'gray',
+                    description: 'Configure system settings, manage workflows, and customize modules.',
+                    link: '{% url "administration" %}' // Replace with link to Phase 5 file
+                }
+            ];
+
+            const grid = document.getElementById('dashboard-grid');
+            
+            grid.innerHTML = dashboards.map(dash => {
+                const colors = {
+                    blue: { bg: 'bg-blue-50', text: 'text-blue-600', ring: 'ring-blue-500' },
+                    green: { bg: 'bg-green-50', text: 'text-green-600', ring: 'ring-green-500' },
+                    amber: { bg: 'bg-amber-50', text: 'text-amber-600', ring: 'ring-amber-500' },
+                    indigo: { bg: 'bg-indigo-50', text: 'text-indigo-600', ring: 'ring-indigo-500' },
+                    slate: { bg: 'bg-slate-50', text: 'text-slate-600', ring: 'ring-slate-500' },
+                    gray: { bg: 'bg-gray-50', text: 'text-gray-600', ring: 'ring-gray-500' }
+                };
+                const color = colors[dash.color] || colors.gray;
+
+                return `
+                <div class="dashboard-card bg-white rounded-xl shadow-lg overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full ${color.bg} ${color.text}">
+                                <i data-lucide="${dash.icon}" class="w-7 h-7"></i>
+                            </div>
+                            <span class="ml-4 text-xs font-bold text-gray-400 uppercase">Phase ${dash.phase}</span>
+                        </div>
+                        <h3 class="mt-4 text-2xl font-bold text-gray-900">${dash.title}</h3>
+                        <p class="mt-2 text-gray-600">${dash.description}</p>
+                    </div>
+                    <div class="p-6 bg-gray-50">
+                        <a href="${dash.link}" target=blank class="w-full flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 ${color.ring}">
+                            Go to Dashboard
+                        </a>
+                    </div>
+                </div>
+                `;
+            }).join('');
+
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
