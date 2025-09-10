@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLATONIC ERP - Marketing</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Chart.js for charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+
+
+    <!-- Custom Styles -->
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .sidebar-nav::-webkit-scrollbar { width: 4px; }
+        .sidebar-nav::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
+        .nav-item.active {
+            background-color: #db2777; /* Pink for marketing */
+            color: white;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .nav-item.active .nav-icon { color: white; }
+        .page-content { display: none; }
+        .page-content.active { display: block; }
+        .tab-button.active {
+            border-color: #db2777;
+            color: #db2777;
+            background-color: #fce7f3;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .calendar-day { min-height: 100px; }
+    </style>
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    
+    <!-- Mobile Menu Toggle Button -->
+    <button id="menu-toggle-btn" class="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-md shadow-md text-gray-600 hover:bg-gray-100">
+        <i data-lucide="menu" class="w-6 h-6"></i>
+    </button>
+
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="w-64 bg-white shadow-lg flex flex-col shrink-0 fixed lg:static h-full z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
+            <div class="flex items-center justify-between h-20 border-b px-4">
+                <h1 class="text-2xl font-bold text-pink-600">PLATONIC</h1>
+                <button id="sidebar-close-btn" class="lg:hidden text-gray-600 hover:text-gray-800">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <nav class="flex-1 px-4 py-4 sidebar-nav overflow-y-auto">
+                <!-- Marketing Section -->
+                <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Marketing</p>
+                <ul>
+                    <li><a href="#" data-page="dashboard" class="nav-item flex items-center p-3 my-1 rounded-lg active"><i data-lucide="layout-dashboard" class="nav-icon w-5 h-5"></i><span class="ml-4 font-medium">Dashboard</span></a></li>
+                    <li><a href="#" data-page="campaigns" class="nav-item flex items-center p-3 my-1 rounded-lg"><i data-lucide="megaphone" class="nav-icon w-5 h-5"></i><span class="ml-4 font-medium">Campaigns</span></a></li>
+                    <li><a href="#" data-page="content" class="nav-item flex items-center p-3 my-1 rounded-lg"><i data-lucide="file-pen-line" class="nav-icon w-5 h-5"></i><span class="ml-4 font-medium">Content (CMS)</span></a></li>
+                    <li><a href="#" data-page="email-marketing" class="nav-item flex items-center p-3 my-1 rounded-lg"><i data-lucide="mail" class="nav-icon w-5 h-5"></i><span class="ml-4 font-medium">Email Marketing</span></a></li>
+                    <li><a href="#" data-page="social-scheduler" class="nav-item flex items-center p-3 my-1 rounded-lg"><i data-lucide="calendar-clock" class="nav-icon w-5 h-5"></i><span class="ml-4 font-medium">Social Scheduler</span></a></li>
+                    <li><a href="#" data-page="leads" class="nav-item flex items-center p-3 my-1 rounded-lg"><i data-lucide="filter" class="nav-icon w-5 h-5"></i><span class="ml-4 font-medium">Lead Generation</span></a></li>
+                    <li><a href="#" data-page="analytics" class="nav-item flex items-center p-3 my-1 rounded-lg"><i data-lucide="bar-chart-3" class="nav-icon w-5 h-5"></i><span class="ml-4 font-medium">Website Analytics</span></a></li>
+                    <li><a href="#" data-page="events" class="nav-item flex items-center p-3 my-1 rounded-lg"><i data-lucide="calendar-check" class="nav-icon w-5 h-5"></i><span class="ml-4 font-medium">Events & Expos</span></a></li>
+                    <li><a href="#" data-page="assets" class="nav-item flex items-center p-3 my-1 rounded-lg"><i data-lucide="folder-kanban" class="nav-icon w-5 h-5"></i><span class="ml-4 font-medium">Asset Library</span></a></li>
+                </ul>
+            </nav>
+             <div class="p-4 border-t">
+                <div class="flex items-center">
+                    <img class="h-10 w-10 rounded-full object-cover" src="https://placehold.co/100x100/FBCFE8/9D174D?text=MM" alt="Marketing Manager" />
+                    <div class="ml-3">
+                        <p class="text-sm font-semibold text-gray-800">Marketing Manager</p>
+                        <p class="text-xs text-gray-500">m.manager@platonic.com</p>
+                    </div>
+                </div>
+                <button id="logout-btn" class="w-full mt-4 flex items-center justify-center p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-colors">
+                    <i data-lucide="log-out" class="w-5 h-5 mr-2"></i>
+                    <span>Logout</span>
+                </button>
+             </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6 lg:p-10 overflow-y-auto">
+            <!-- Dashboard Page -->
+            <div id="dashboard-page" class="page-content active space-y-6">
+                <h2 class="text-3xl font-bold text-gray-800">Marketing Dashboard</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="dashboard-cards"></div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md"><h3 class="font-semibold mb-4">Campaign Performance (Leads)</h3><canvas id="campaignChart"></canvas></div>
+                    <div class="bg-white p-6 rounded-lg shadow-md"><h3 class="font-semibold mb-4">Lead Sources</h3><canvas id="leadSourceChart"></canvas></div>
+                </div>
+                 <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-4">Upcoming Social Posts</h3>
+                    <div id="upcoming-posts-list" class="space-y-3"></div>
+                </div>
+            </div>
+
+            <!-- Campaigns Page -->
+            <div id="campaigns-page" class="page-content space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-3xl font-bold text-gray-800">Campaigns</h2>
+                    <button id="add-campaign-btn" class="bg-pink-600 text-white px-4 py-2 rounded-lg shadow hover:bg-pink-700 flex items-center"><i data-lucide="plus" class="w-4 h-4 mr-2"></i> New Campaign</button>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-md overflow-x-auto"><table class="w-full text-sm" id="campaigns-table"></table></div>
+            </div>
+            
+            <!-- Add Campaign Page -->
+            <div id="add-campaign-page" class="page-content space-y-6">
+                <h2 class="text-3xl font-bold text-gray-800">Create New Campaign</h2>
+                <div class="bg-white p-8 rounded-lg shadow-md max-w-4xl mx-auto">
+                    <form action="#" method="POST" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="campaign-name" class="block text-sm font-medium text-gray-700">Campaign Name</label>
+                                <input type="text" id="campaign-name" name="name" class="mt-1 block w-full p-2 border rounded-md border-gray-300" required>
+                            </div>
+                             <div>
+                                <label for="campaign-status" class="block text-sm font-medium text-gray-700">Status</label>
+                                <select id="campaign-status" name="status" class="mt-1 block w-full p-2 border rounded-md border-gray-300">
+                                    <option>Planning</option>
+                                    <option>Active</option>
+                                    <option>Completed</option>
+                                </select>
+                            </div>
+                             <div>
+                                <label for="campaign-channel" class="block text-sm font-medium text-gray-700">Channel</label>
+                                <input type="text" id="campaign-channel" name="channel" class="mt-1 block w-full p-2 border rounded-md border-gray-300" placeholder="e.g., Social Media, Email">
+                            </div>
+                             <div>
+                                <label for="campaign-budget" class="block text-sm font-medium text-gray-700">Budget</label>
+                                <input type="number" id="campaign-budget" name="budget" class="mt-1 block w-full p-2 border rounded-md border-gray-300">
+                            </div>
+                        </div>
+                        <div class="flex justify-end space-x-3 pt-4">
+                            <button type="button" id="cancel-add-campaign" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100">Cancel</button>
+                            <button type="submit" class="px-6 py-2 bg-pink-600 text-white rounded-lg shadow hover:bg-pink-700">Save Campaign</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Content (CMS) Page -->
+            <div id="content-page" class="page-content space-y-6">
+                 <h2 class="text-3xl font-bold text-gray-800">Content Management System</h2>
+                 <div class="border-b border-gray-200">
+                    <nav id="content-tabs" class="-mb-px flex space-x-6" aria-label="Tabs"></nav>
+                </div>
+                <div id="content-tab-content"></div>
+            </div>
+            
+             <!-- Email Marketing Page -->
+            <div id="email-marketing-page" class="page-content space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-3xl font-bold text-gray-800">Email Marketing</h2>
+                    <button id="new-email-template-btn" class="bg-pink-600 text-white px-4 py-2 rounded-lg shadow hover:bg-pink-700 flex items-center"><i data-lucide="plus" class="w-4 h-4 mr-2"></i> New Email Template</button>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-md overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3">Template Name</th>
+                                <th class="px-6 py-3">Subject Line</th>
+                                <th class="px-6 py-3">Status</th>
+                                <th class="px-6 py-3 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="email-templates-table">
+                            <!-- Email templates will be rendered here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Email Template Editor Page -->
+            <div id="email-template-editor-page" class="page-content space-y-6">
+                <h2 id="email-editor-title" class="text-3xl font-bold text-gray-800">Create New Email Template</h2>
+                <div class="bg-white p-8 rounded-lg shadow-md max-w-4xl mx-auto">
+                    <form action="#" method="POST" class="space-y-6">
+                        <input type="hidden" id="template-id" name="id">
+                        <div>
+                            <label for="template-name" class="block text-sm font-medium text-gray-700">Template Name</label>
+                            <input type="text" id="template-name" name="name" class="mt-1 block w-full p-2 border rounded-md border-gray-300" placeholder="e.g., Welcome Email Series - 1" required>
+                        </div>
+                        <div>
+                            <label for="template-subject" class="block text-sm font-medium text-gray-700">Email Subject</label>
+                            <input type="text" id="template-subject" name="subject" class="mt-1 block w-full p-2 border rounded-md border-gray-300" placeholder="e.g., Welcome to PLATONIC!" required>
+                        </div>
+                        <div>
+                            <label for="template-body" class="block text-sm font-medium text-gray-700">Email Body</label>
+                            <textarea id="template-body" name="body" rows="12" class="mt-1 block w-full p-2 border rounded-md border-gray-300 font-mono" placeholder="Use HTML for your email body..."></textarea>
+                        </div>
+                        <div class="flex justify-end space-x-3 pt-4">
+                            <button type="button" id="cancel-edit-template" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100">Cancel</button>
+                            <button type="submit" class="px-6 py-2 bg-pink-600 text-white rounded-lg shadow hover:bg-pink-700">Save Template</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Social Scheduler Page -->
+            <div id="social-scheduler-page" class="page-content space-y-6">
+                <h2 class="text-3xl font-bold text-gray-800">Social Media Scheduler</h2>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex justify-between items-center mb-4">
+                        <button><i data-lucide="chevron-left"></i></button>
+                        <h3 class="text-xl font-semibold">September 2025</h3>
+                        <button><i data-lucide="chevron-right"></i></button>
+                    </div>
+                    <div class="grid grid-cols-7 gap-px bg-gray-200 border border-gray-200">
+                        <div class="text-center font-semibold py-2 bg-gray-50">Sun</div><div class="text-center font-semibold py-2 bg-gray-50">Mon</div><div class="text-center font-semibold py-2 bg-gray-50">Tue</div><div class="text-center font-semibold py-2 bg-gray-50">Wed</div><div class="text-center font-semibold py-2 bg-gray-50">Thu</div><div class="text-center font-semibold py-2 bg-gray-50">Fri</div><div class="text-center font-semibold py-2 bg-gray-50">Sat</div>
+                        <!-- Calendar days will be rendered here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leads Page -->
+            <div id="leads-page" class="page-content space-y-6">
+                 <h2 class="text-3xl font-bold text-gray-800">Lead Generation Tracker</h2>
+                 <div class="bg-white p-4 rounded-lg shadow-md overflow-x-auto"><table class="w-full text-sm" id="leads-table"></table></div>
+            </div>
+            
+            <!-- Analytics Page -->
+            <div id="analytics-page" class="page-content space-y-6">
+                <h2 class="text-3xl font-bold text-gray-800">Website & SEO Analytics</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md"><h3 class="font-semibold mb-4">Website Traffic (Last 30 Days)</h3><canvas id="trafficChart"></canvas></div>
+                    <div class="bg-white p-6 rounded-lg shadow-md"><h3 class="font-semibold mb-4">Top Landing Pages</h3><div id="top-pages-list"></div></div>
+                </div>
+            </div>
+
+            <!-- Events Page -->
+            <div id="events-page" class="page-content space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-3xl font-bold text-gray-800">Events & Expos</h2>
+                    <button id="add-event-btn" class="bg-pink-600 text-white px-4 py-2 rounded-lg shadow hover:bg-pink-700 flex items-center"><i data-lucide="plus" class="w-4 h-4 mr-2"></i> Log New Event</button>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-md overflow-x-auto"><table class="w-full text-sm" id="events-table"></table></div>
+            </div>
+             <!-- Add Event Page -->
+            <div id="add-event-page" class="page-content space-y-6">
+                <h2 class="text-3xl font-bold text-gray-800">Log New Event</h2>
+                <div class="bg-white p-8 rounded-lg shadow-md max-w-4xl mx-auto">
+                    <form action="#" method="POST" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="event-name" class="block text-sm font-medium text-gray-700">Event Name</label>
+                                <input type="text" id="event-name" name="name" class="mt-1 block w-full p-2 border rounded-md border-gray-300" required>
+                            </div>
+                             <div>
+                                <label for="event-date" class="block text-sm font-medium text-gray-700">Date</label>
+                                <input type="date" id="event-date" name="date" class="mt-1 block w-full p-2 border rounded-md border-gray-300" required>
+                            </div>
+                             <div>
+                                <label for="event-location" class="block text-sm font-medium text-gray-700">Location</label>
+                                <input type="text" id="event-location" name="location" class="mt-1 block w-full p-2 border rounded-md border-gray-300" placeholder="e.g., Dubai WTC">
+                            </div>
+                             <div>
+                                <label for="event-leads" class="block text-sm font-medium text-gray-700">Leads Generated</label>
+                                <input type="number" id="event-leads" name="leads" class="mt-1 block w-full p-2 border rounded-md border-gray-300">
+                            </div>
+                        </div>
+                        <div class="flex justify-end space-x-3 pt-4">
+                            <button type="button" id="cancel-add-event" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100">Cancel</button>
+                            <button type="submit" class="px-6 py-2 bg-pink-600 text-white rounded-lg shadow hover:bg-pink-700">Save Event</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+            <!-- Asset Library Page -->
+            <div id="assets-page" class="page-content space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-3xl font-bold text-gray-800">Brand Asset Library</h2>
+                    <button id="upload-asset-btn" class="bg-pink-600 text-white px-4 py-2 rounded-lg shadow hover:bg-pink-700 flex items-center"><i data-lucide="upload" class="w-4 h-4 mr-2"></i> Upload Asset</button>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4" id="asset-grid"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Overlay for mobile sidebar -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden lg:hidden"></div>
+
+    <!-- Modals -->
+    <div id="modal-container"></div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- MOCK DATA ---
+            const mockCampaigns = [
+                { id: 1, name: 'Luxury Villa Showcase 2025', status: 'Active', channel: 'Social Media', budget: 5000, leads: 152, roi: '250%' },
+                { id: 2, name: 'Commercial Spaces Promo', status: 'Completed', channel: 'Email, Print', budget: 7500, leads: 88, roi: '180%' },
+                { id: 3, name: 'Sustainable Building Webinar', status: 'Planning', channel: 'Online Event', budget: 2000, leads: 0, roi: 'N/A' },
+            ];
+            const mockContent = {
+                articles: [{ title: '5 Sustainable Materials for Modern Homes', status: 'Published' }, { title: 'The Future of Urban Architecture', status: 'Draft' }],
+                captions: [{ title: 'Instagram: Villa Project Reel', status: 'Scheduled' }, { title: 'LinkedIn: Company Milestone', status: 'Published' }],
+                emails: [{ title: 'Welcome Series - Email 1', status: 'Active' }, { title: 'Monthly Newsletter - August', status: 'Sent' }]
+            };
+            const mockEmailTemplates = [
+                { id: 1, name: 'Welcome Email - New Client', subject: 'Welcome to the PLATONIC Family!', status: 'Active' },
+                { id: 2, name: 'Project Update Template', subject: 'An Update on Your Project: [Project Name]', status: 'Draft' },
+                { id: 3, name: 'Post-Project Feedback', subject: 'We\'d Love Your Feedback on [Project Name]', status: 'Active' },
+            ];
+            const mockLeads = [
+                { name: 'Aisha Khan', source: 'Instagram', campaign: 'Luxury Villa Showcase 2025', status: 'New' },
+                { name: 'Ben Carter', source: 'Website Form', campaign: 'N/A', status: 'Contacted' },
+                { name: 'Chen Wei', source: 'Cityscape Expo', campaign: 'N/A', status: 'Qualified' },
+            ];
+            const mockEvents = [
+                { id: 1, name: 'Cityscape Global Expo', date: '2025-10-15', location: 'Dubai WTC', leads: 45 },
+                { id: 2, name: 'Future Homes Seminar', date: '2025-11-05', location: 'Online', leads: 120 },
+            ];
+            const mockAssets = [
+                { name: 'Primary Logo', type: 'logo', url: 'https://placehold.co/200x100/fce7f3/9d174d?text=LOGO' },
+                { name: 'Company Brochure', type: 'brochure', url: 'https://placehold.co/200x100/fce7f3/9d174d?text=PDF' },
+                { name: 'Project Photo 1', type: 'photo', url: 'https://placehold.co/200x100/fce7f3/9d174d?text=IMG' },
+            ];
+             const mockSocialPosts = [
+                { platform: 'Instagram', text: 'Sneak peek of our latest villa project... #architecture', date: '2025-09-06T14:00:00' },
+                { platform: 'LinkedIn', text: 'We are proud to announce our new sustainability initiative...', date: '2025-09-08T09:00:00' },
+            ];
+
+            // --- CHART INSTANCES ---
+            let chartInstances = {};
+            function destroyChart(chartId) {
+                if (chartInstances[chartId]) {
+                    chartInstances[chartId].destroy();
+                    delete chartInstances[chartId];
+                }
+            }
+
+            // --- PAGE NAVIGATION & CONTROL ---
+            const sidebar = document.getElementById('sidebar');
+            const menuToggleBtn = document.getElementById('menu-toggle-btn');
+            const sidebarCloseBtn = document.getElementById('sidebar-close-btn');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            const navLinks = document.querySelectorAll('.nav-item');
+            const pages = document.querySelectorAll('.page-content');
+
+            menuToggleBtn.addEventListener('click', () => { sidebar.classList.remove('-translate-x-full'); sidebarOverlay.classList.remove('hidden'); });
+            function closeSidebar() { sidebar.classList.add('-translate-x-full'); sidebarOverlay.classList.add('hidden'); }
+            sidebarCloseBtn.addEventListener('click', closeSidebar);
+            sidebarOverlay.addEventListener('click', closeSidebar);
+
+            function switchPage(pageId, context = null) {
+                pages.forEach(p => p.classList.remove('active'));
+                navLinks.forEach(l => l.classList.remove('active'));
+                
+                const pageToShow = document.getElementById(`${pageId}-page`);
+                if (pageToShow) pageToShow.classList.add('active');
+
+                let linkId = pageId.startsWith('add-') ? pageId.replace('add-', '') : pageId;
+                linkId = linkId.startsWith('email-template-editor') ? 'email-marketing' : linkId;
+                const linkToActivate = document.querySelector(`.nav-item[data-page="${linkId}"]`);
+                if(linkToActivate) linkToActivate.classList.add('active');
+
+                if (window.innerWidth < 1024) closeSidebar();
+                
+                // Page specific render calls
+                const renderMap = {
+                    'dashboard': renderDashboard,
+                    'content': renderContentPage,
+                    'analytics': renderAnalyticsPage,
+                    'social-scheduler': renderCalendar,
+                    'email-marketing': renderEmailMarketingPage,
+                    'email-template-editor': () => renderEmailTemplateEditor(context)
+                };
+                if(renderMap[pageId]) renderMap[pageId]();
+
+                lucide.createIcons();
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    switchPage(e.currentTarget.dataset.page);
+                });
+            });
+
+            // Button listeners
+            document.getElementById('add-campaign-btn').addEventListener('click', () => switchPage('add-campaign'));
+            document.getElementById('cancel-add-campaign').addEventListener('click', () => switchPage('campaigns'));
+            document.getElementById('add-event-btn').addEventListener('click', () => switchPage('add-event'));
+            document.getElementById('cancel-add-event').addEventListener('click', () => switchPage('events'));
+            document.getElementById('new-email-template-btn').addEventListener('click', () => switchPage('email-template-editor'));
+            document.getElementById('cancel-edit-template').addEventListener('click', () => switchPage('email-marketing'));
+            document.getElementById('upload-asset-btn').addEventListener('click', () => showUploadModal());
+
+            // --- RENDER FUNCTIONS ---
+            const getStatusClass = (status) => {
+                const map = { Active: 'bg-green-100 text-green-800', Completed: 'bg-blue-100 text-blue-800', Planning: 'bg-yellow-100 text-yellow-800', Draft: 'bg-gray-100 text-gray-800' };
+                return map[status] || 'bg-gray-100 text-gray-800';
+            };
+
+            function renderDashboard() {
+                // ... existing dashboard render code ...
+                document.getElementById('dashboard-cards').innerHTML = [
+                    { title: "Active Campaigns", value: "3", icon: "megaphone" },
+                    { title: "Leads (This Month)", value: "240", icon: "users" },
+                    { title: "Conversion Rate", value: "4.2%", icon: "percent" },
+                    { title: "Website Traffic", value: "12.5k", icon: "mouse-pointer-click" }
+                ].map(c => `
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="flex justify-between items-start">
+                            <div><p class="text-sm text-gray-500">${c.title}</p><p class="text-3xl font-bold">${c.value}</p></div>
+                            <div class="bg-pink-100 text-pink-600 p-3 rounded-full"><i data-lucide="${c.icon}" class="w-6 h-6"></i></div>
+                        </div>
+                    </div>`).join('');
+                destroyChart('campaignChart');
+                chartInstances['campaignChart'] = new Chart(document.getElementById('campaignChart'), { type: 'bar', data: { labels: mockCampaigns.map(c => c.name), datasets: [{ label: 'Leads', data: mockCampaigns.map(c => c.leads), backgroundColor: '#db2777' }] }, options: { responsive: true, plugins: { legend: { display: false } } } });
+                destroyChart('leadSourceChart');
+                chartInstances['leadSourceChart'] = new Chart(document.getElementById('leadSourceChart'), { type: 'doughnut', data: { labels: ['Social Media', 'Website', 'Events', 'Referrals'], datasets: [{ data: [120, 80, 45, 35], backgroundColor: ['#db2777', '#c026d3', '#9d174d', '#fbcfe8'] }] }, options: { responsive: true } });
+                document.getElementById('upcoming-posts-list').innerHTML = mockSocialPosts.map(p => `<div class="flex items-start p-2 rounded hover:bg-gray-50"><i data-lucide="${p.platform.toLowerCase()}" class="w-5 h-5 mr-3 text-gray-500 mt-1"></i><div><p class="text-sm">${p.text}</p><p class="text-xs text-pink-600 font-semibold">${new Date(p.date).toLocaleString()}</p></div></div>`).join('');
+            }
+            
+            function renderTable(containerId, headers, data, actions = null) {
+                const table = document.getElementById(containerId);
+                table.innerHTML = `
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50"><tr>${headers.map(h => `<th class="px-6 py-3">${h}</th>`).join('')}${actions ? `<th class="px-6 py-3 text-right">Actions</th>` : ''}</tr></thead>
+                    <tbody>${data.map((row, index) => `
+                        <tr class="bg-white border-b hover:bg-gray-50">${row.map(cell => `<td class="px-6 py-4">${cell}</td>`).join('')}
+                        ${actions ? `<td class="px-6 py-4 text-right">${actions(index)}</td>` : ''}</tr>`).join('')}
+                    </tbody>`;
+            }
+
+            // Campaigns Page
+            renderTable('campaigns-table', ['Name', 'Status', 'Channel', 'Budget', 'Leads', 'ROI'], mockCampaigns.map(c => [ c.name, `<span class="px-2 py-1 text-xs font-semibold rounded-full ${getStatusClass(c.status)}">${c.status}</span>`, c.channel, `$${c.budget}`, c.leads, c.roi ]));
+            
+            // Content Page
+            function renderContentPage() {
+                 document.getElementById('content-tabs').innerHTML = `
+                    <button class="tab-button active py-4 px-1 border-b-2 font-medium text-sm" data-tab="articles">Blog Articles</button>
+                    <button class="tab-button py-4 px-1 border-b-2 font-medium text-sm" data-tab="captions">Social Captions</button>
+                    <button class="tab-button py-4 px-1 border-b-2 font-medium text-sm" data-tab="emails">Email Templates</button>`;
+                document.getElementById('content-tab-content').innerHTML = `
+                    <div id="tab-articles" class="tab-content active"></div>
+                    <div id="tab-captions" class="tab-content"></div>
+                    <div id="tab-emails" class="tab-content"></div>`;
+                
+                ['articles', 'captions', 'emails'].forEach(key => {
+                    const contentHtml = mockContent[key].map(item => `<div class="p-4 border rounded-md mb-2 flex justify-between items-center"><span>${item.title}</span><span class="px-2 py-1 text-xs font-semibold rounded-full ${item.status === 'Published' || item.status === 'Sent' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">${item.status}</span></div>`).join('');
+                    document.getElementById(`tab-${key}`).innerHTML = contentHtml;
+                });
+
+                document.querySelectorAll('.tab-button').forEach(btn => btn.addEventListener('click', e => {
+                    const tabId = e.target.dataset.tab;
+                    document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    document.getElementById(`tab-${tabId}`).classList.add('active');
+                }));
+            }
+            
+            // Email Marketing Page
+            function renderEmailMarketingPage() {
+                renderTable('email-templates-table', ['Template Name', 'Subject Line', 'Status'], mockEmailTemplates.map(t => [t.name, t.subject, `<span class="px-2 py-1 text-xs font-semibold rounded-full ${getStatusClass(t.status)}">${t.status}</span>`]), 
+                (index) => `<button class="edit-template-btn text-pink-600 hover:underline" data-id="${mockEmailTemplates[index].id}">Edit</button>`);
+                document.querySelectorAll('.edit-template-btn').forEach(btn => btn.addEventListener('click', e => switchPage('email-template-editor', { id: e.target.dataset.id })));
+            }
+
+            function renderEmailTemplateEditor(context) {
+                const title = document.getElementById('email-editor-title');
+                const idInput = document.getElementById('template-id');
+                const nameInput = document.getElementById('template-name');
+                const subjectInput = document.getElementById('template-subject');
+                const bodyInput = document.getElementById('template-body');
+
+                if (context && context.id) {
+                    const template = mockEmailTemplates.find(t => t.id == context.id);
+                    title.textContent = `Edit Email Template: ${template.name}`;
+                    idInput.value = template.id;
+                    nameInput.value = template.name;
+                    subjectInput.value = template.subject;
+                    bodyInput.value = `<!-- HTML for ${template.name} -->`;
+                } else {
+                    title.textContent = 'Create New Email Template';
+                    idInput.value = '';
+                    nameInput.value = '';
+                    subjectInput.value = '';
+                    bodyInput.value = '';
+                }
+            }
+
+            function renderCalendar() {
+                const calendarGrid = document.querySelector('#social-scheduler-page .grid.grid-cols-7');
+                calendarGrid.innerHTML = `<div class="text-center font-semibold py-2 bg-gray-50">Sun</div><div class="text-center font-semibold py-2 bg-gray-50">Mon</div><div class="text-center font-semibold py-2 bg-gray-50">Tue</div><div class="text-center font-semibold py-2 bg-gray-50">Wed</div><div class="text-center font-semibold py-2 bg-gray-50">Thu</div><div class="text-center font-semibold py-2 bg-gray-50">Fri</div><div class="text-center font-semibold py-2 bg-gray-50">Sat</div>`; // Clear and add headers
+                for (let i = 1; i <= 30; i++) { // Simplified for September
+                    let dayHtml = `<div class="calendar-day bg-white p-2 border-t border-r border-gray-200"><span class="font-semibold">${i}</span>`;
+                    if (i === 6) dayHtml += `<div class="text-xs bg-pink-100 p-1 rounded mt-1 truncate">IG: Villa Sneak Peek</div>`;
+                    if (i === 8) dayHtml += `<div class="text-xs bg-blue-100 p-1 rounded mt-1 truncate">LI: Sustainability Post</div>`;
+                    dayHtml += `</div>`;
+                    calendarGrid.innerHTML += dayHtml;
+                }
+            }
+            
+            // Leads Page
+            renderTable('leads-table', ['Name', 'Source', 'Campaign', 'Status'], mockLeads.map(l => [l.name, l.source, l.campaign, l.status]));
+
+            // Analytics Page
+            function renderAnalyticsPage() {
+                 destroyChart('trafficChart');
+                chartInstances['trafficChart'] = new Chart(document.getElementById('trafficChart'), { type: 'line', data: { labels: Array.from({length: 30}, (_, i) => new Date(2025, 7, i + 7)), datasets: [{ label: 'Users', data: Array.from({length: 30}, () => Math.floor(Math.random() * 200) + 300), borderColor: '#db2777', tension: 0.1, fill: false }] }, options: { responsive: true, scales: { x: { type: 'time', time: { unit: 'day' } } } } });
+                document.getElementById('top-pages-list').innerHTML = `<div class="flex justify-between p-2"><span>/projects/luxury-villas</span><span>2.1k Views</span></div><div class="flex justify-between p-2 bg-gray-50"><span>/blog/sustainable-materials</span><span>1.8k Views</span></div><div class="flex justify-between p-2"><span>/contact</span><span>980 Views</span></div>`;
+            }
+            
+            // Events Page
+            renderTable('events-table', ['Name', 'Date', 'Location', 'Leads Generated'], mockEvents.map(e => [e.name, e.date, e.location, e.leads]));
+
+            // Asset Library Page
+            document.getElementById('asset-grid').innerHTML = mockAssets.map(a => `<div class="text-center"><div class="bg-white rounded-lg shadow-md p-2"><img src="${a.url}" class="w-full h-24 object-contain"></div><p class="text-sm mt-2">${a.name}</p></div>`).join('');
+            
+            // --- MODAL FOR UPLOADING ---
+            function showUploadModal() {
+                 const modalContainer = document.getElementById('modal-container');
+                 modalContainer.innerHTML = `
+                    <div id="upload-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+                        <div class="bg-white rounded-lg shadow-2xl p-8 w-full max-w-lg m-4">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="text-2xl font-bold text-gray-800">Upload New Asset</h3>
+                                <button id="close-upload-modal" class="text-gray-400 hover:text-gray-600">&times;</button>
+                            </div>
+                            <form action="#" method="POST" enctype="multipart/form-data" class="space-y-4">
+                                <div>
+                                    <label for="asset-name" class="block text-sm font-medium text-gray-700">Asset Name</label>
+                                    <input type="text" id="asset-name" name="name" class="mt-1 block w-full p-2 border rounded-md border-gray-300" required>
+                                </div>
+                                <div>
+                                    <label for="asset-file" class="block text-sm font-medium text-gray-700">File</label>
+                                    <input type="file" id="asset-file" name="file" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100" required>
+                                </div>
+                                <div class="flex justify-end space-x-3 pt-4">
+                                    <button type="button" id="cancel-upload" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100">Cancel</button>
+                                    <button type="submit" class="px-6 py-2 bg-pink-600 text-white rounded-lg shadow hover:bg-pink-700">Upload</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>`;
+                
+                const closeModal = () => modalContainer.innerHTML = '';
+                document.getElementById('close-upload-modal').addEventListener('click', closeModal);
+                document.getElementById('cancel-upload').addEventListener('click', closeModal);
+            }
+
+            // --- INITIAL LOAD ---
+            renderDashboard();
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
+

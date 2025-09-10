@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'operations',
     'procurement',
     'hr',
-    'legal'
+    'legal',
+    'marketing',
 ]
 
 MIDDLEWARE = [
@@ -176,6 +177,29 @@ LOGIN_URL = '/accounts/login/'
 # LOGIN_REDIRECT_URL = '/sales/sales_dashboard/'
 LOGIN_REDIRECT_URL = '/all-departments/'
 
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# For production (example with SendGrid):
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.sendgrid.net'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'apikey'
+# EMAIL_HOST_PASSWORD = 'YOUR_SENDGRID_API_KEY'
+# DEFAULT_FROM_EMAIL = 'marketing@platonic.com'
+
+
+
+
+# For production (example with SendGrid):
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'zishanzubaer7@gmail.com'
+EMAIL_HOST_PASSWORD = 'qcns hmna owyr jcdw'
 
 
 

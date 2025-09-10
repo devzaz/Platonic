@@ -1,0 +1,106 @@
+<!-- marketing/templates/marketing/form_page.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>{{ title }}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+  <div class="max-w-5xl mx-auto p-6">
+    <div class="flex items-center justify-between mb-6">
+      <h1 class="text-3xl font-bold text-gray-800">{{ title }}</h1>
+      <a href="{% url 'marketing:dashboard' %}" class="text-pink-600 hover:underline">Back to Dashboard</a>
+    </div>
+
+    {% if mode == "form" %}
+      <form method="post" class="bg-white p-6 rounded-lg shadow space-y-4">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="pt-2">
+          <button class="px-6 py-2 bg-pink-600 text-white rounded-lg shadow hover:bg-pink-700">Save</button>
+        </div>
+      </form>
+    {% elif mode == "list" %}
+      <div class="bg-white p-6 rounded-lg shadow">
+        <div class="mb-4 text-right">
+          <a href="{{ create_url }}" class="px-4 py-2 bg-pink-600 text-white rounded hover:bg-pink-700">{{ create_label }}</a>
+        </div>
+        <table class="w-full text-sm">
+          <thead class="text-xs uppercase text-gray-700 bg-gray-50">
+            <tr>
+              {% for col in columns %}<th class="px-4 py-3 text-left">{{ col }}</th>{% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in rows %}
+              <tr class="border-b">
+                {% for col in row %}
+                  {% if col|slice:":4" == "/mar" or col|slice:":5" == "/mark" %}
+                    <td class="px-4 py-3"><a href="{{ col }}" class="text-pink-600 hover:underline">Edit</a></td>
+                  {% else %}
+                    <td class="px-4 py-3">{{ col }}</td>
+                  {% endif %}
+                {% endfor %}
+              </tr>
+            {% empty %}
+              <tr><td class="px-4 py-4" colspan="{{ columns|length }}">No data.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% elif mode == "campaign_list" %}
+      <div class="bg-white p-6 rounded-lg shadow">
+        <div class="mb-4 text-right">
+          <a href="{{ create_url }}" class="px-4 py-2 bg-pink-600 text-white rounded hover:bg-pink-700">{{ create_label }}</a>
+        </div>
+        <table class="w-full text-sm">
+          <thead class="text-xs uppercase text-gray-700 bg-gray-50">
+            <tr>
+              <th class="px-4 py-3 text-left">Subject</th>
+              <th class="px-4 py-3 text-left">Mailing List</th>
+              <th class="px-4 py-3 text-left">Status</th>
+              <th class="px-4 py-3 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for c in list_items %}
+              <tr class="border-b">
+                <td class="px-4 py-3">{{ c.subject }}</td>
+                <td class="px-4 py-3">{{ c.mailing_list.name }}</td>
+                <td class="px-4 py-3">{{ c.status }}</td>
+                <td class="px-4 py-3">
+                    {% if c.status == "Sent" %}
+                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Sent</span>
+                    {% elif c.status == "Sending" %}
+                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Sending</span>
+                    {% elif c.status == "Draft" %}
+                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">Draft</span>
+                    {% else %}
+                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">{{ c.status }}</span>
+                    {% endif %}
+                </td>
+                <td class="px-4 py-3 text-right">
+                    <a class="text-pink-600 hover:underline mr-4"
+                    href="{% url 'marketing:campaign_preview' c.id %}">Preview</a>
+
+                    {% if c.status == "Sent" %}
+                    <span class="px-3 py-1 rounded bg-gray-100 text-gray-500 cursor-not-allowed">Sent</span>
+                    {% elif c.status == "Sending" %}
+                    <span class="px-3 py-1 rounded bg-yellow-100 text-yellow-800 cursor-wait">Sending…</span>
+                    {% else %}
+                    <a class="text-white bg-pink-600 px-3 py-1 rounded hover:bg-pink-700"
+                        href="{% url 'marketing:send_now' c.id %}">Send</a>
+                    {% endif %}
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td class="px-4 py-4" colspan="4">No campaigns yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+  </div>
+</body>
+</html>

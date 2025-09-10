@@ -116,6 +116,22 @@
                     color: 'gray',
                     description: 'Configure system settings, manage workflows, and customize modules.',
                     link: '{% url "administration" %}' // Replace with link to Phase 5 file
+                },
+                {
+                    phase: 6,
+                    title: 'Marketing',
+                    icon: 'sliders-horizontal',
+                    color: 'pink',
+                    description: 'All marketing tools and modules.',
+                    link: '{% url "marketing:tools" %}' // Replace with link to Phase 6 file
+                },
+                {
+                    phase: 7,
+                    title: 'Email Marketing',
+                    icon: 'sliders-horizontal',
+                    color: 'pink',
+                    description: 'Email marketing tools and modules.(Manual)',
+                    link: '{% url "marketing:dashboard" %}' // Replace with link to Phase 6 file
                 }
             ];
 
@@ -128,7 +144,8 @@
                     amber: { bg: 'bg-amber-50', text: 'text-amber-600', ring: 'ring-amber-500' },
                     indigo: { bg: 'bg-indigo-50', text: 'text-indigo-600', ring: 'ring-indigo-500' },
                     slate: { bg: 'bg-slate-50', text: 'text-slate-600', ring: 'ring-slate-500' },
-                    gray: { bg: 'bg-gray-50', text: 'text-gray-600', ring: 'ring-gray-500' }
+                    gray: { bg: 'bg-gray-50', text: 'text-gray-600', ring: 'ring-gray-500' },
+                    pink: { bg: 'bg-pink-50', text: 'text-pink-600', ring: 'ring-pink-500' },
                 };
                 const color = colors[dash.color] || colors.gray;
 

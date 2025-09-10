@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PLATONIC ERP - Marketing</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .sidebar-nav::-webkit-scrollbar { width: 4px; }
+    .sidebar-nav::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
+    .nav-item.active { background-color: #db2777; color: white; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
+    .nav-item.active .nav-icon { color: white; }
+    .page-content { display: none; }
+    .page-content.active { display: block; }
+    .tab-button.active { border-color: #db2777; color: #db2777; background-color: #fce7f3; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .calendar-day { min-height: 100px; }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+
+  <!-- Mobile Menu Toggle Button -->
+  <button id="menu-toggle-btn" class="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-md shadow-md text-gray-600 hover:bg-gray-100">
+    <i data-lucide="menu" class="w-6 h-6"></i>
+  </button>
+
+  <div class="flex h-screen">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="w-64 bg-white shadow-lg flex flex-col shrink-0 fixed lg:static h-full z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
+      <div class="flex items-center justify-between h-20 border-b px-4">
+        <h1 class="text-2xl font-bold text-pink-600">PLATONIC</h1>
+        <button id="sidebar-close-btn" class="lg:hidden text-gray-600 hover:text-gray-800"><i data-lucide="x" class="w-6 h-6"></i></button>
+      </div>
+      <nav class="flex-1 px-4 py-4 sidebar-nav overflow-y-auto">
+        <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Marketing</p>
+        <ul>
+          <li><a href="#" data-page="dashboard" class="nav-item flex items-center p-3 my-1 rounded-lg active"><i data-lucide="layout-dashboard" class="nav-icon w-5 h-5"></i><span class="ml-4 font-medium">Dashboard</span></a></li>
+          <li><a href="{% url 'marketing:email_campaign_list' %}" class="nav-item flex items-center p-3 my-1 rounded-lg"><i data-lucide="megaphone" class="nav-icon w-5 h-5"></i><span class="ml-4 font-medium">Campaigns</span></a></li>
+          <li><a href="{% url 'marketing:email_template_list' %}" class="nav-item flex items-center p-3 my-1 rounded-lg"><i data-lucide="mail" class="nav-icon w-5 h-5"></i><span class="ml-4 font-medium">Email Templates</span></a></li>
+          <li><a href="{% url 'marketing:subscriber_list' %}" class="nav-item flex items-center p-3 my-1 rounded-lg"><i data-lucide="users" class="nav-icon w-5 h-5"></i><span class="ml-4 font-medium">Subscribers</span></a></li>
+          <li><a href="{% url 'marketing:mailing_list_list' %}" class="nav-item flex items-center p-3 my-1 rounded-lg"><i data-lucide="list" class="nav-icon w-5 h-5"></i><span class="ml-4 font-medium">Mailing Lists</span></a></li>
+        </ul>
+      </nav>
+      <div class="p-4 border-t">
+        <div class="flex items-center">
+          <img class="h-10 w-10 rounded-full object-cover" src="https://placehold.co/100x100/FBCFE8/9D174D?text=MM" alt="Marketing Manager" />
+          <div class="ml-3">
+            <p class="text-sm font-semibold text-gray-800">Marketing Manager</p>
+            <p class="text-xs text-gray-500">m.manager@platonic.com</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-6 lg:p-10 overflow-y-auto">
+      <!-- Dashboard Page -->
+      <div id="dashboard-page" class="page-content active space-y-6">
+        <h2 class="text-3xl font-bold text-gray-800">Marketing Dashboard</h2>
+
+        <!-- Metrics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="dashboard-cards">
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="flex justify-between items-start">
+              <div><p class="text-sm text-gray-500">Active Campaigns</p><p class="text-3xl font-bold">{{ metrics.active_campaigns }}</p></div>
+              <div class="bg-pink-100 text-pink-600 p-3 rounded-full"><i data-lucide="megaphone" class="w-6 h-6"></i></div>
+            </div>
+          </div>
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="flex justify-between items-start">
+              <div><p class="text-sm text-gray-500">Leads (This Month)</p><p class="text-3xl font-bold">{{ metrics.leads_this_month }}</p></div>
+              <div class="bg-pink-100 text-pink-600 p-3 rounded-full"><i data-lucide="users" class="w-6 h-6"></i></div>
+            </div>
+          </div>
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="flex justify-between items-start">
+              <div><p class="text-sm text-gray-500">Conversion Rate</p><p class="text-3xl font-bold">{{ metrics.conversion_rate }}</p></div>
+              <div class="bg-pink-100 text-pink-600 p-3 rounded-full"><i data-lucide="percent" class="w-6 h-6"></i></div>
+            </div>
+          </div>
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="flex justify-between items-start">
+              <div><p class="text-sm text-gray-500">Website Traffic</p><p class="text-3xl font-bold">{{ metrics.website_traffic }}</p></div>
+              <div class="bg-pink-100 text-pink-600 p-3 rounded-full"><i data-lucide="mouse-pointer-click" class="w-6 h-6"></i></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Two charts placeholders (optional: wire to real data later) -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="bg-white p-6 rounded-lg shadow-md"><h3 class="font-semibold mb-4">Campaign Performance (Leads)</h3><canvas id="campaignChart"></canvas></div>
+          <div class="bg-white p-6 rounded-lg shadow-md"><h3 class="font-semibold mb-4">Lead Sources</h3><canvas id="leadSourceChart"></canvas></div>
+        </div>
+
+        <!-- Upcoming Social Posts -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h3 class="text-lg font-semibold text-gray-700 mb-4">Upcoming Social Posts</h3>
+          <div id="upcoming-posts-list" class="space-y-3">
+            {% for p in social_posts %}
+              <div class="flex items-start p-2 rounded hover:bg-gray-50">
+                <i data-lucide="{{ p.social_account.platform|lower }}" class="w-5 h-5 mr-3 text-gray-500 mt-1"></i>
+                <div>
+                  <p class="text-sm">{{ p.content_asset.title }}</p>
+                  <p class="text-xs text-pink-600 font-semibold">{{ p.scheduled_time }}</p>
+                </div>
+              </div>
+            {% empty %}
+              <p class="text-sm text-gray-500">No scheduled posts.</p>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Email Templates (quick access) -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <div class="flex justify-between items-center mb-3">
+            <h3 class="text-lg font-semibold text-gray-700">Email Templates</h3>
+            <a href="{% url 'marketing:email_template_create' %}" class="bg-pink-600 text-white px-4 py-2 rounded-lg shadow hover:bg-pink-700 flex items-center"><i data-lucide="plus" class="w-4 h-4 mr-2"></i> New Email Template</a>
+          </div>
+          <table class="w-full text-sm">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left">Template Name</th>
+                <th class="px-6 py-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="email-templates-table">
+              {% for t in email_templates %}
+                <tr class="bg-white border-b hover:bg-gray-50">
+                  <td class="px-6 py-4">{{ t.title }}</td>
+                  <td class="px-6 py-4 text-right">
+                    <a href="{% url 'marketing:email_template_edit' t.id %}" class="text-pink-600 hover:underline">Edit</a>
+                  </td>
+                </tr>
+              {% empty %}
+                <tr><td class="px-6 py-4" colspan="2">No templates created yet.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // sidebar toggle
+    const sidebar = document.getElementById('sidebar');
+    const menuToggleBtn = document.getElementById('menu-toggle-btn');
+    const sidebarCloseBtn = document.getElementById('sidebar-close-btn');
+    menuToggleBtn?.addEventListener('click', () => sidebar.classList.remove('-translate-x-full'));
+    sidebarCloseBtn?.addEventListener('click', () => sidebar.classList.add('-translate-x-full'));
+
+    // basic charts (placeholder data)
+    const campaignChart = new Chart(document.getElementById('campaignChart'), {
+      type: 'bar',
+      data: {
+        labels: [{% for c in campaigns %}"{{ c.name|escapejs }}",{% endfor %}],
+        datasets: [{ label: 'Leads', data: [{% for c in campaigns %}{{ c.budget|default:0 }},{% endfor %}] }]
+      },
+      options: { responsive: true, plugins: { legend: { display: false } } }
+    });
+
+    const leadSourceChart = new Chart(document.getElementById('leadSourceChart'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Social Media', 'Website', 'Events', 'Referrals'],
+        datasets: [{ data: [120, 80, 45, 35] }]
+      },
+      options: { responsive: true }
+    });
+
+    lucide.createIcons();
+  </script>
+</body>
+</html>
