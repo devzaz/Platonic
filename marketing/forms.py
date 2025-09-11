@@ -47,3 +47,28 @@ class EmailCampaignForm(forms.ModelForm):
             "mailing_list": forms.Select(attrs={"class": "mt-1 block w-full p-2 border rounded-md border-gray-300"}),
             "status": forms.Select(attrs={"class": "mt-1 block w-full p-2 border rounded-md border-gray-300"}),
         }
+
+class AssetForm(forms.ModelForm):
+    class Meta:
+        model = ContentAsset
+        fields = ["title", 'asset_file']
+        widgets = {
+            "title": forms.TextInput(attrs={'class':'mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100',
+                                            'id':'asset_file',
+                                            'name':'file',
+                                            }),
+            "asset_file": forms.FileInput(attrs={
+                'id':'asset-file',
+                'name':'file',
+                'class':'mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100'
+            })
+
+        }
+
+
+        def save(self, commit=False):
+            obj = super.save(commit=False)
+            obj.content_type = 'brand_visual'
+            if commit:
+                obj.save()
+            return obj

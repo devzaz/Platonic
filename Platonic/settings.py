@@ -146,23 +146,56 @@ USE_TZ = True
 
 # STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-STATIC_ROOT = 'staticfiles'
-STATIC_URL = '/static/'
+# STATIC_ROOT = 'staticfiles'
+# STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-STATICFILES_DIR = {
-    os.path.join(BASE_DIR, 'public/static')
-}
+# STATICFILES_DIR = {
+#     os.path.join(BASE_DIR, 'public/static')
+# }
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'public/static')
-MEDIA_URL = '/media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'public/static')
+# MEDIA_URL = '/media/'
 
+# STORAGES = {
+#     "staticfiles": {
+#         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+#     },
+# }
+
+
+# --- Static files ---
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"  # where collectstatic puts built assets
+
+# Folders of source static assets during development (plural!)
+STATICFILES_DIRS = [
+    BASE_DIR / "public" / "static",
+]
+
+# --- Media (user uploads) ---
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "public" / "media"  # keep media OUT of your static dir
+
+# --- Storages (Django 5+) ---
 STORAGES = {
-    "staticfiles": {
+    "default": {  # used by FileField / ImageField uploads
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "OPTIONS": {
+            "location": str(MEDIA_ROOT),
+            "base_url": MEDIA_URL,
+        },
+    },
+    "staticfiles": {  # used by staticfiles pipeline
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
+
+
+# STORAGES["default"] = {
+#     "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+# }
 
 
 # Default primary key field type
