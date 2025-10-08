@@ -23,6 +23,9 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
+#for apis
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('core.urls')),
@@ -32,7 +35,16 @@ urlpatterns = [
     path('hr/', include('hr.urls')),
     path('projects/', include('projects.urls')),
     path('marketing/', include('marketing.urls')),
-]
+
+
+    # API schema & docs
+    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
+    path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
+
+
+    path("api/", include("api.urls")),
+    ]
 
 
 

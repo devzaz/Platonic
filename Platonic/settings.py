@@ -48,11 +48,20 @@ INSTALLED_APPS = [
     'hr',
     'legal',
     'marketing',
+    'api',
+
+
+    #third party
+    'rest_framework',
+    'corsheaders',
+    'drf_spectacular',
+    'django_filters'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     "whitenoise.middleware.WhiteNoiseMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -236,3 +245,29 @@ EMAIL_HOST_PASSWORD = 'qcns hmna owyr jcdw'
 
 
 
+
+REST_FRAMEWORK = {
+"DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+"DEFAULT_FILTER_BACKENDS": [
+"django_filters.rest_framework.DjangoFilterBackend",
+"rest_framework.filters.SearchFilter",
+"rest_framework.filters.OrderingFilter",
+],
+"DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+"PAGE_SIZE": 20,
+# Light throttling for anonymous POST spam
+"DEFAULT_THROTTLE_CLASSES": [
+"rest_framework.throttling.AnonRateThrottle",
+"rest_framework.throttling.UserRateThrottle",
+],
+"DEFAULT_THROTTLE_RATES": {
+"anon": "30/hour",
+"user": "1000/hour",
+},
+}
+
+SPECTACULAR_SETTINGS = {
+"TITLE": "Platonic API",
+"DESCRIPTION": "API for ContactUs & Career submissions.",
+"VERSION": "1.0.0",
+}
