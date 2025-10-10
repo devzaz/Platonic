@@ -26,6 +26,11 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 #for apis
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 
+#main admin page customization
+admin.site.site_header = "Platonic Control Panel"  # Changes the main header on the admin page
+admin.site.site_title = "My Custom Admin Portal"  # Changes the browser tab title
+admin.site.index_title = "Welcome to Platonic Control Panel"  # Changes the title on the admin index page
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('core.urls')),
