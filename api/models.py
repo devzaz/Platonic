@@ -46,3 +46,53 @@ class Career(BaseModel):
     cover_letter = models.TextField(blank=True, null=True)
 
 
+
+
+# for project portfolio forntend
+
+
+class Category(BaseModel):
+    name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
+    
+
+
+class Project(BaseModel):
+    Status_Choices = [
+        ('completed', 'Completed'),
+        ('in_progress', 'In Progress'),
+        ('pending', 'Pending'),
+    ]
+
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='projects')
+    title = models.CharField(max_length=200)
+    description = models.TextField(default='N/A', blank=True, null=True)
+    location = models.CharField(max_length=200)
+    status = models.CharField(max_length=20, choices=Status_Choices, default='completed')
+    year = models.PositiveIntegerField()
+
+
+    def __str__(self):
+        return self.title 
+    
+
+
+class ProjectImage(BaseModel):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to='project_images/')
+
+
+    def __str__(self):
+        return f"Image for {self.project.title}"
+    
+
+
+class ProjectVideo(BaseModel):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='videos')
+    video = models.FileField(upload_to='project_videos/')
+
+
+    def __str__(self):
+        return f"Video for {self.project.title}"

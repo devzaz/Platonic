@@ -1,6 +1,8 @@
 from rest_framework import serializers
-from .models import ContactUs, Career
+from .models import ContactUs, Career, Category, Project, ProjectImage, ProjectVideo
 import filetype
+
+
 
 ALLOWED_MIMES = {
     "application/pdf",
@@ -65,3 +67,34 @@ class CareerSerializer(serializers.ModelSerializer):
             return file
 
         raise serializers.ValidationError("Only PDF, DOC, or DOCX allowed.")
+    
+
+
+
+class ProjectImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProjectImage
+        fields = ['uid', 'image']
+
+
+class ProjectVideoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProjectVideo
+        fields = ['uid', 'video']
+
+
+class ProjectSerializer(serializers.ModelSerializer):
+    images = ProjectImageSerializer(many=True, read_only=True)
+    videos = ProjectVideoSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Project
+        fields = ['uid', 'title', 'description',  'location', 'status', 'year', 'images', 'videos']
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    projects = ProjectSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Category
+        fields = ['uid', 'name', 'projects']

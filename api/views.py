@@ -6,8 +6,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 
 
-from .models import ContactUs, Career
-from .serializers import ContactUsSerializer, CareerSerializer
+from .models import ContactUs, Career, Category, Project, ProjectImage, ProjectVideo
+from .serializers import ContactUsSerializer, CareerSerializer, ProjectSerializer, ProjectImageSerializer, CategorySerializer, ProjectVideoSerializer
 from .permissions import IsCreateOrStaffRead
 
 
@@ -41,3 +41,27 @@ class CareerViewSet(viewsets.ModelViewSet):
         .order_by("position")
         )
         return Response(list(data))
+    
+
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+
+class ProjectViewSet(viewsets.ModelViewSet):
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['category', 'status', 'year']
+
+
+class ProjectImageViewSet(viewsets.ModelViewSet):
+    queryset = ProjectImage.objects.all()
+    serializer_class = ProjectImageSerializer
+
+
+
+class ProjectVideoViewSet(viewsets.ModelViewSet):
+    queryset = ProjectVideo.objects.all()
+    serializer_class = ProjectVideoSerializer
