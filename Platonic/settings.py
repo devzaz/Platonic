@@ -12,12 +12,12 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
 
-# load_dotenv(os.path.join(BASE_DIR, '.env'))
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -26,7 +26,7 @@ TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -95,24 +95,24 @@ WSGI_APPLICATION = 'Platonic.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('NAME'),
-        'USER': os.environ.get('USER'),
-        'PASSWORD': os.environ.get('PASSWORD'),
-        'HOST': os.environ.get('HOST'),
-        'OPTIONS': {'sslmode': 'require'},
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.environ.get('NAME'),
+#         'USER': os.environ.get('USER'),
+#         'PASSWORD': os.environ.get('PASSWORD'),
+#         'HOST': os.environ.get('HOST'),
+#         'OPTIONS': {'sslmode': 'require'},
+#     }
+# }
 
 
 # Password validation
