@@ -184,8 +184,11 @@ STATICFILES_DIRS = [
 ]
 
 # --- Media (user uploads) ---
+# MEDIA_URL = "/media/"
+# MEDIA_ROOT = BASE_DIR / "public" / "media"  
+# 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "public" / "media"  # keep media OUT of your static dir
+MEDIA_ROOT = "/app/public/media"
 
 # --- Storages (Django 5+) ---
 STORAGES = {
