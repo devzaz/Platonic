@@ -89,7 +89,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Project
-        fields = ['uid', 'title', 'description',  'location', 'status', 'year', 'images', 'videos']
+        fields = ['uid', 'title', 'description', 'category', 'location', 'status', 'year', 'images', 'videos']
 
 
 class CategorySerializer(serializers.ModelSerializer):
