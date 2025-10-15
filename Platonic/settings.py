@@ -26,7 +26,7 @@ TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -271,3 +271,34 @@ SPECTACULAR_SETTINGS = {
 "DESCRIPTION": "API for ContactUs & Career submissions.",
 "VERSION": "1.0.0",
 }
+
+
+# CORS configuration
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000",
+#     "https://platonic-webapp.koyeb.app",
+# ]
+
+# If you want to allow all origins (not recommended for production):
+CORS_ALLOW_ALL_ORIGINS = True
+
+# CORS_ALLOW_HEADERS = [
+#     "accept",
+#     "accept-encoding",
+#     "authorization",
+#     "content-type",
+#     "dnt",
+#     "origin",
+#     "user-agent",
+#     "x-csrftoken",
+#     "x-requested-with",
+# ]
+
+# CORS_ALLOW_METHODS = [
+#     "DELETE",
+#     "GET",
+#     "OPTIONS",
+#     "PATCH",
+#     "POST",
+#     "PUT",
+# ]
