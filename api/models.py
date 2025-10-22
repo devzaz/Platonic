@@ -69,9 +69,9 @@ class Project(BaseModel):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='projects')
     title = models.CharField(max_length=200)
     description = models.TextField(default='N/A', blank=True, null=True)
-    location = models.CharField(max_length=200)
+    location = models.CharField(max_length=200, blank=True, null=True)
     status = models.CharField(max_length=20, choices=Status_Choices, default='completed')
-    year = models.PositiveIntegerField()
+    year = models.PositiveIntegerField(blank=True, null=True)
 
 
     def __str__(self):
