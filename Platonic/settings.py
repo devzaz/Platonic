@@ -115,6 +115,9 @@ DATABASES = {
 }
 
 
+
+
+
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -191,16 +194,43 @@ MEDIA_ROOT = BASE_DIR / "public" / "media"
 # MEDIA_ROOT = "/app/public/media"
 
 # --- Storages (Django 5+) ---
+# STORAGES = {
+#     "default": {  # used by FileField / ImageField uploads
+#         "BACKEND": "django.core.files.storage.FileSystemStorage",
+#         "OPTIONS": {
+#             "location": str(MEDIA_ROOT),
+#             "base_url": MEDIA_URL,
+#         },
+#     },
+#     "staticfiles": {  # used by staticfiles pipeline
+#         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+#     },
+# }
+
+CLOUDFLARE_R2_BUCKET = os.environ.get('CLOUDFLARE_R2_BUCKET')
+CLOUDFLARE_R2_ACCESS_KEY = os.environ.get('CLOUDFLARE_R2_ACCESS_KEY')
+CLOUDFLARE_SECRET_KEY = os.environ.get('CLOUDFLARE_SECRET_KEY')
+CLOUDFLARE_R2_BUCKET_ENDPOINT = os.environ.get('CLOUDFLARE_R2_BUCKET_ENDPOINT')
+
+
+CLOUDFLARE_R2_CONFIG_OPTIONS = {
+    "bucket_name": CLOUDFLARE_R2_BUCKET,
+    "default_acl": "public-read",  # or "private"
+    "signature_version": "s3v4",
+    "endpoint_url": CLOUDFLARE_R2_BUCKET_ENDPOINT,
+    "access_key": CLOUDFLARE_R2_ACCESS_KEY,
+    "secret_key": CLOUDFLARE_SECRET_KEY,
+}
+
+# Introduced in Django 4.2
 STORAGES = {
-    "default": {  # used by FileField / ImageField uploads
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
-        "OPTIONS": {
-            "location": str(MEDIA_ROOT),
-            "base_url": MEDIA_URL,
-        },
+    "default": {
+        "BACKEND": "helpers.cloudflare.storages.MediaFileStorage",
+        "OPTIONS": CLOUDFLARE_R2_CONFIG_OPTIONS,
     },
-    "staticfiles": {  # used by staticfiles pipeline
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    "staticfiles": {
+        "BACKEND": "helpers.cloudflare.storages.StaticFileStorage",
+        "OPTIONS": CLOUDFLARE_R2_CONFIG_OPTIONS,
     },
 }
 
@@ -250,23 +280,23 @@ EMAIL_HOST_PASSWORD = 'qcns hmna owyr jcdw'
 
 
 REST_FRAMEWORK = {
-"DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-"DEFAULT_FILTER_BACKENDS": [
-"django_filters.rest_framework.DjangoFilterBackend",
-"rest_framework.filters.SearchFilter",
-"rest_framework.filters.OrderingFilter",
-],
-"DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-"PAGE_SIZE": 20,
-# Light throttling for anonymous POST spam
-"DEFAULT_THROTTLE_CLASSES": [
-"rest_framework.throttling.AnonRateThrottle",
-"rest_framework.throttling.UserRateThrottle",
-],
-"DEFAULT_THROTTLE_RATES": {
-"anon": "30/hour",
-"user": "1000/hour",
-},
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_FILTER_BACKENDS": [
+    "django_filters.rest_framework.DjangoFilterBackend",
+    "rest_framework.filters.SearchFilter",
+    "rest_framework.filters.OrderingFilter",
+    ],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 20,
+    # Light throttling for anonymous POST spam
+    "DEFAULT_THROTTLE_CLASSES": [
+    "rest_framework.throttling.AnonRateThrottle",
+    "rest_framework.throttling.UserRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+    "anon": "30/hour",
+    "user": "1000/hour",
+    },
 }
 
 SPECTACULAR_SETTINGS = {
