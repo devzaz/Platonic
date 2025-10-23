@@ -238,19 +238,29 @@ def assets_list_api(request):
     """
     data = []
     qs = ContentAsset.objects.filter(content_type='brand_visual').order_by("-id").only("id", "title", "asset_file")
+
     for a in qs:
         url = a.asset_file.url if a.asset_file else ""
-        size = a.asset_file.size if a.asset_file else 0
+        try:
+            size = a.asset_file.size if a.asset_file else 0
+        except FileNotFoundError:
+            # file missing in storage, handle gracefully
+            size = 0
+            url = ""
+        except Exception:
+            size = 0
+
         mt, _ = mimetypes.guess_type(url)
         data.append({
             "id": a.id,
             "title": a.title,
-            "url": url,                      # direct media URL (works for previews)
-            "download": f"/marketing/assets/{a.id}/download/",   # nicer download route
+            "url": url,
+            "download": f"/marketing/assets/{a.id}/download/",
             "size": size,
             "mimetype": mt or "application/octet-stream",
             "filename": os.path.basename(a.asset_file.name) if a.asset_file else "",
         })
+
     return JsonResponse({"results": data})
 
 

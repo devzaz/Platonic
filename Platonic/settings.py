@@ -12,12 +12,12 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
 # 
-load_dotenv(os.path.join(BASE_DIR, '.env'))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+# load_dotenv(os.path.join(BASE_DIR, '.env'))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
 # 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -26,7 +26,7 @@ load_dotenv(os.path.join(BASE_DIR, '.env'))
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -204,6 +204,10 @@ MEDIA_ROOT = BASE_DIR / "public" / "media"
 #     },
 # }
 
+
+# for production deployment using Cloudflare R2
+
+
 CLOUDFLARE_R2_BUCKET = os.environ.get('CLOUDFLARE_R2_BUCKET')
 CLOUDFLARE_R2_ACCESS_KEY = os.environ.get('CLOUDFLARE_R2_ACCESS_KEY')
 CLOUDFLARE_SECRET_KEY = os.environ.get('CLOUDFLARE_SECRET_KEY')
@@ -232,9 +236,9 @@ STORAGES = {
 }
 
 
-# STORAGES["default"] = {
-#     "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-# }
+STORAGES["default"] = {
+    "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+}
 
 
 # Default primary key field type
