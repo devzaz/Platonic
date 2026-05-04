@@ -2,8 +2,8 @@
 from django import forms
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.files.base import ContentFile
-import requests
-import base64
+# import requests
+# import base64
 
 class R2PresignedFileField(forms.FileField):
     """
