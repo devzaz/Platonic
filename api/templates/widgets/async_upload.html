@@ -1,0 +1,57 @@
+<input type="file" id="file-input" name="{{ widget.name }}" multiple>
+<div id="progress-container" style="margin-top:10px;"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const input = document.getElementById("file-input");
+  const container = document.getElementById("progress-container");
+
+  input.addEventListener("change", async (e) => {
+    container.innerHTML = "";
+    for (const file of e.target.files) {
+      const bar = document.createElement("div");
+      bar.style.cssText = "width:0%;height:10px;background:green;margin-top:4px;border-radius:3px;";
+      container.appendChild(bar);
+
+      // Step 1: ask Django for presigned URL
+      const res = await fetch(`/admin/presign-upload/?filename=${encodeURIComponent(file.name)}`);
+      const data = await res.json();
+
+      // Step 2: upload directly to R2
+      await uploadFile(data.upload_url, file, bar);
+
+      // Step 3: insert hidden input to send file path to Django
+      const hidden = document.createElement("input");
+      hidden.type = "hidden";
+      hidden.name = "{{ widget.name }}";  // same name as FileField
+      hidden.value = `uploads/${file.name}`;  // relative path, not full URL
+      input.closest("form").appendChild(hidden);
+
+      // Optional: show preview
+      const img = document.createElement("img");
+      img.src = data.public_url;
+      img.width = 100;
+      img.style.margin = "5px 5px 0 0";
+      container.appendChild(img);
+    }
+
+    // Prevent default file input from submitting local files
+    input.value = "";
+  });
+
+  function uploadFile(url, file, bar) {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open("PUT", url);
+      xhr.upload.onprogress = (e) => {
+        if (e.lengthComputable) {
+          bar.style.width = `${(e.loaded / e.total) * 100}%`;
+        }
+      };
+      xhr.onload = () => resolve();
+      xhr.onerror = reject;
+      xhr.send(file);
+    });
+  }
+});
+</script>

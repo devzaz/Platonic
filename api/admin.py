@@ -1,11 +1,35 @@
 from django.contrib import admin
 from .models import ContactUs, Career, Category, Project, ProjectImage, ProjectVideo
 from django.utils.html import format_html
+from django import forms
+from .forms import R2PresignedFileField
 
+class AsyncFileUploadWidget(forms.ClearableFileInput):
+    # template_name = "widgets/async_upload.html"
+    template_name = "widgets/async_upload.html"
+    allow_multiple_selected = True
+
+
+
+
+class ProjectImageForm(forms.ModelForm):
+    image = R2PresignedFileField(required=False)
+    class Meta:
+        model = ProjectImage
+        fields = ["image"]
+        widgets = {"image": AsyncFileUploadWidget()}
+
+class ProjectVideoForm(forms.ModelForm):
+    video = R2PresignedFileField(required=False)
+    class Meta:
+        model = ProjectVideo
+        fields = ["video"]
+        widgets = {"video": AsyncFileUploadWidget()}
 
 
 class ProjectVideoInline(admin.TabularInline):
     model = ProjectVideo
+    # form = ProjectVideoForm
     extra = 1
     fields = ['video', 'preview']
     readonly_fields = ['preview']
@@ -25,8 +49,11 @@ class ProjectVideoInline(admin.TabularInline):
 
 
 
+
+
 class ProjectImageInline(admin.TabularInline):  # or StackedInline
     model = ProjectImage
+    # form = ProjectImageForm
     extra = 1
     fields = ['image', 'preview']
     readonly_fields = ['preview']

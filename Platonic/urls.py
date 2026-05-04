@@ -25,6 +25,8 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 #for apis
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
+from api.presign_views import presign_upload
+
 
 #main admin page customization
 admin.site.site_header = "Platonic Control Panel"  # Changes the main header on the admin page
@@ -32,6 +34,7 @@ admin.site.site_title = "My Custom Admin Portal"  # Changes the browser tab titl
 admin.site.index_title = "Welcome to Platonic Control Panel"  # Changes the title on the admin index page
 
 urlpatterns = [
+    path("admin/presign-upload/", presign_upload, name="presign-upload"),
     path('admin/', admin.site.urls),
     path('', include('core.urls')),
     path('sales/', include('sales.urls')),
@@ -49,6 +52,7 @@ urlpatterns = [
 
 
     path("api/", include("api.urls")),
+
     ]
 
 
